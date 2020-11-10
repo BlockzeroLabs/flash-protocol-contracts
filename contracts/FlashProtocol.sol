@@ -82,12 +82,13 @@ contract FlashProtocol is IFlashProtocol {
         address _receiver,
         bytes calldata _data
     ) public override returns (uint256 mintedAmount, uint256 matchedAmount, bytes32 id){
-        // require(expireAfter <= MAX_STAKE, "FlashProtocol:: STAKE_MAX_4_YEARS"); //discuss
         require(_days > 0, "FlashProtocol:: INVALID_DAYS");
 
         require(_amountIn > 0, "FlashProtocol:: INVALID_AMOUNT");
 
-        address staker = msg.sender; //discuss
+        require(_receiver != address(this), "FlashProtocol:: INVALID ADDRESS");
+
+        address staker = msg.sender;
 
         uint256 expiration = _days.mul(ONE_DAY);
 
