@@ -86,7 +86,7 @@ contract FlashProtocol is IFlashProtocol {
 
         require(_amountIn > 0, "FlashProtocol:: INVALID_AMOUNT");
 
-        require(_receiver != address(this), "FlashProtocol:: INVALID ADDRESS");
+        require(_receiver != address(this), "FlashProtocol:: INVALID_ADDRESS");
 
         address staker = msg.sender;
 
