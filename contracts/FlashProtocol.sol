@@ -3,11 +3,12 @@ pragma solidity 0.6.12;
 
 import "./interfaces/IFlashToken.sol";
 import "./interfaces/IFlashReceiver.sol";
+import "./interfaces/IFlashProtocol.sol";
 
 import "./libraries/SafeMath.sol";
 import "./libraries/Address.sol";
 
-contract FlashProtocol {
+contract FlashProtocol is IFlashProtocol {
     using SafeMath for uint256;
     using Address for address;
 
@@ -24,7 +25,7 @@ contract FlashProtocol {
     uint256 internal constant ONE_DAY = 86400;
 
     address
-        public constant FLASH_TOKEN = 0x706AEa632c07D34C9FF9EA419bf19c85dBA4Dcb8;
+        public constant FLASH_TOKEN = address(0);
 
     uint256 public matchRatio;
     address public matchReceiver;
@@ -80,7 +81,7 @@ contract FlashProtocol {
         uint256 _days,
         address _receiver,
         bytes calldata _data
-    ) public {
+    ) public override returns (uint256 mintedAmount, uint256 matchedAmount, bytes32 id){
         // require(expireAfter <= MAX_STAKE, "FlashProtocol:: STAKE_MAX_4_YEARS"); //discuss
         require(_days > 0, "FlashProtocol:: INVALID_DAYS");
 
@@ -94,7 +95,7 @@ contract FlashProtocol {
 
         balances[staker] = balances[staker].add(_amountIn);
 
-        bytes32 id = keccak256(
+        id = keccak256(
             abi.encodePacked(
                 _amountIn,
                 _days,
@@ -109,8 +110,8 @@ contract FlashProtocol {
             "FlashProtocol:: STAKE_EXISTS"
         );
 
-        uint256 mintedAmount = getMintAmount(_amountIn, _days);
-        uint256 matchedAmount = getMatchedAmount(mintedAmount);
+        mintedAmount = getMintAmount(_amountIn, _days);
+        matchedAmount = getMatchedAmount(mintedAmount);
 
         IFlashToken(FLASH_TOKEN).mint(_receiver, mintedAmount);
         IFlashToken(FLASH_TOKEN).mint(matchReceiver, matchedAmount);
@@ -146,21 +147,20 @@ contract FlashProtocol {
         );
     }
 
-    function unstake(bytes32 _id, uint256 _amount) public returns(uint256 withdrawAmount) {
+    function unstake(bytes32 _id) public override returns(uint256 withdrawAmount) {
         Stake memory s = stakes[_id];
         address staker = msg.sender;
         if(
             block.timestamp >= s.initiation.add(s.expireAfter)
         ){
             balances[staker] = balances[staker].sub(s.amountIn);
-            s.amountIn = s.amountIn.sub(_amount);
+            withdrawAmount = s.amountIn;
             if (s.amountIn == 0) delete stakes[_id];
-            withdrawAmount = _amount;
         }else{
-            withdrawAmount = _unstakeEarly(_id, _amount);
+            withdrawAmount = _unstakeEarly(_id);
         }
         IFlashToken(FLASH_TOKEN).transfer(staker, withdrawAmount);
-        emit Unstaked(_id, _amount, staker);
+        emit Unstaked(_id, s.amountIn, staker);
     }
 
     function getMatchedAmount(uint256 mintedAmount)
@@ -171,7 +171,7 @@ contract FlashProtocol {
         return mintedAmount.mul(matchRatio).div(10000);
     }
 
-    function _unstakeEarly(bytes32 _id, uint256 _amount)
+    function _unstakeEarly(bytes32 _id)
         private
         returns (uint256 withdrawAmount)
     {
@@ -179,13 +179,12 @@ contract FlashProtocol {
         address staker = msg.sender;
         uint256 _remainingDays = (s.expireAfter.sub(block.timestamp));
         uint256 burnAmount = _calculateBurn(
-            _amount,
+            s.amountIn,
             _remainingDays,
             s.expireAfter.sub(s.initiation)
         );
-        balances[staker] = balances[staker].sub(_amount);
-        s.amountIn = s.amountIn.sub(_amount);
-        withdrawAmount = _amount.sub(burnAmount);
+        balances[staker] = balances[staker].sub(s.amountIn);
+        withdrawAmount = s.amountIn.sub(burnAmount);
         if (s.amountIn == 0) delete stakes[_id];
         IFlashToken(FLASH_TOKEN).burn(burnAmount);
     }
