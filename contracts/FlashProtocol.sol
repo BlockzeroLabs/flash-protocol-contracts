@@ -27,8 +27,6 @@ contract FlashProtocol is IFlashProtocol {
 
     address public constant FLASH_TOKEN = address(0);
 
-    address changer;
-
     uint256 public matchRatio;
     address public matchReceiver;
 
@@ -57,7 +55,6 @@ contract FlashProtocol is IFlashProtocol {
 
     constructor(address _initialMatchReceiver) public {
         _setMatchReceiver(_initialMatchReceiver);
-        changer = msg.sender;
     }
 
     function setMatchReceiver(address _newMatchReceiver)
