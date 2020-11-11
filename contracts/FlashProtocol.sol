@@ -125,7 +125,7 @@ contract FlashProtocol is IFlashProtocol {
 
         stakes[id] = Stake(
             _amountIn,
-            block.timestamp,
+            _expiry,
             expiration,
             mintedAmount,
             staker,
@@ -145,8 +145,8 @@ contract FlashProtocol is IFlashProtocol {
 
         emit Staked(
             id,
-            block.timestamp,
             _amountIn,
+            _expiry,
             expiration,
             mintedAmount,
             staker,
