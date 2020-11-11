@@ -22,7 +22,7 @@ contract FlashProtocol is IFlashProtocol {
     }
 
     uint256 internal constant PRECISION = 1e18;
-    uint256 internal constant MAX_FPY_FOR_1_YEAR = 1e17;
+    uint256 internal constant MAX_FPY_FOR_1_YEAR = 5e17;
 
     uint256 internal constant SECONDS_IN_1_YEAR = 365 * 86400;
 
