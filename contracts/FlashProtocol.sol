@@ -27,6 +27,8 @@ contract FlashProtocol is IFlashProtocol {
 
     address public constant FLASH_TOKEN = address(0);
 
+    address changer;
+
     uint256 public matchRatio;
     address public matchReceiver;
 
@@ -55,6 +57,7 @@ contract FlashProtocol is IFlashProtocol {
 
     constructor(address _initialMatchReceiver) public {
         _setMatchReceiver(_initialMatchReceiver);
+        changer = msg.sender;
     }
 
     function setMatchReceiver(address _newMatchReceiver)
@@ -175,7 +178,7 @@ contract FlashProtocol is IFlashProtocol {
         returns (uint256 withdrawAmount)
     {
         Stake memory s = stakes[_id];
-        address staker = msg.sender;
+        address staker = s.staker;
         require(s.staker == msg.sender, "FlashProtocol:: INVALID_STAKER");
         uint256 remainingDays = (s.expireAfter.sub(block.timestamp));
         uint256 burnAmount = _calculateBurn(
