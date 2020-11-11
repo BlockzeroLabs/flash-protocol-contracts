@@ -86,6 +86,8 @@ contract FlashProtocol is IFlashProtocol {
         require(_receiver != address(this), "FlashProtocol:: INVALID_ADDRESS");
 
         address staker = msg.sender;
+        
+        require(_expiry <= calculateMaxStakePeriod(_amountIn), "FlashProtocol:: MAX_STAKE_PERIOD_EXCEEDS");
 
         uint256 expiration = block.timestamp.add(_expiry);
 
@@ -163,5 +165,9 @@ contract FlashProtocol is IFlashProtocol {
         uint256 _totalTime
     ) private pure returns (uint256 burnAmount) {
         burnAmount = ((_amount.mul(_remainingTime)).div(_totalTime));
+    }
+
+    function calculateMaxStakePeriod(uint256 _amountIn) internal view returns (uint256){
+        return (500000000000000000 * SECONDS_IN_1_YEAR)/getFPY(_amountIn);
     }
 }
