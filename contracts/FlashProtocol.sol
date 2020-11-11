@@ -22,6 +22,7 @@ contract FlashProtocol is IFlashProtocol {
     }
 
     uint256 internal constant PRECISION = 1e18;
+    uint256 internal constant MAX_FPY_FOR_1_YEAR = 1e17;
 
     uint256 internal constant SECONDS_IN_1_YEAR = 365 * 86400;
 
@@ -86,7 +87,7 @@ contract FlashProtocol is IFlashProtocol {
         require(_receiver != address(this), "FlashProtocol:: INVALID_ADDRESS");
 
         address staker = msg.sender;
-        
+
         require(_expiry <= calculateMaxStakePeriod(_amountIn), "FlashProtocol:: MAX_STAKE_PERIOD_EXCEEDS");
 
         uint256 expiration = block.timestamp.add(_expiry);
@@ -144,19 +145,16 @@ contract FlashProtocol is IFlashProtocol {
     }
 
     function getMintAmount(uint256 _amountIn, uint256 _expiry) public view returns (uint256) {
-        uint256 output = _amountIn.mul(_expiry).mul(getFPY(_amountIn)).div(PRECISION * SECONDS_IN_1_YEAR);
-        uint256 limit = _amountIn.div(2);
-        return output > limit ? limit : output;
+        return _amountIn.mul(_expiry).mul(getFPY(_amountIn)).div(PRECISION * SECONDS_IN_1_YEAR);
     }
 
     function getFPY(uint256 _amountIn) public view returns (uint256) {
-        return (PRECISION.sub(getPercentStaked(_amountIn))).div(2);
+        return (PRECISION.sub(getPercentageStaked(_amountIn))).div(2);
     }
 
-    function getPercentStaked(uint256 _amountIn) public view returns (uint256) {
+    function getPercentageStaked(uint256 _amountIn) public view returns (uint256 percentage) {
         uint256 locked = IFlashToken(FLASH_TOKEN).balanceOf(address(this)).add(_amountIn);
-        uint256 percent = locked.mul(PRECISION).div(IFlashToken(FLASH_TOKEN).totalSupply());
-        return percent > PRECISION ? PRECISION : percent;
+        percentage = locked.mul(PRECISION).div(IFlashToken(FLASH_TOKEN).totalSupply());
     }
 
     function _calculateBurn(
@@ -167,7 +165,7 @@ contract FlashProtocol is IFlashProtocol {
         burnAmount = ((_amount.mul(_remainingTime)).div(_totalTime));
     }
 
-    function calculateMaxStakePeriod(uint256 _amountIn) internal view returns (uint256){
-        return (500000000000000000 * SECONDS_IN_1_YEAR)/getFPY(_amountIn);
+    function calculateMaxStakePeriod(uint256 _amountIn) private view returns (uint256) {
+        return MAX_FPY_FOR_1_YEAR.mul(SECONDS_IN_1_YEAR).div(getFPY(_amountIn));
     }
 }
