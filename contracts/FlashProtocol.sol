@@ -26,7 +26,7 @@ contract FlashProtocol is IFlashProtocol {
 
     uint256 internal constant SECONDS_IN_1_YEAR = 365 * 86400;
 
-    address public constant FLASH_TOKEN = address(0);
+    address public constant FLASH_TOKEN = 0x91D7d7Ef396e56535040676C2BB67e50D4330FaF;
 
     uint256 public matchRatio;
     address public matchReceiver;

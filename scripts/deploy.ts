@@ -11,12 +11,9 @@ async function main(): Promise<void> {
   // to make sure everything is compiled
   // await run("compile");
 
-  const MATCH_RECEIVER = "0xDE174710543dCED471A5747Fe3060d11E881a356";
-
   // We get the contract to deploy
   const FlashProtocol: ContractFactory = await ethers.getContractFactory("FlashProtocol");
-  console.log(`Start deploying Flash Protocol with match receiver: ${MATCH_RECEIVER}`);
-  const flashProtocol: Contract = await FlashProtocol.deploy(MATCH_RECEIVER);
+  const flashProtocol: Contract = await FlashProtocol.deploy();
   await flashProtocol.deployed();
 
   console.log("FlashProtocol deployed to: ", flashProtocol.address);
