@@ -26,13 +26,13 @@ contract FlashProtocol is IFlashProtocol {
 
     uint256 internal constant SECONDS_IN_1_YEAR = 365 * 86400;
 
-    address public constant FLASH_TOKEN = 0x91D7d7Ef396e56535040676C2BB67e50D4330FaF;
+    address public override constant FLASH_TOKEN = 0x91D7d7Ef396e56535040676C2BB67e50D4330FaF;
 
-    uint256 public matchRatio;
-    address public matchReceiver;
+    uint256 public override matchRatio;
+    address public override matchReceiver;
 
-    mapping(bytes32 => Stake) public stakes;
-    mapping(address => uint256) public balances;
+    mapping(bytes32 => Stake) public override stakes;
+    mapping(address => uint256) public override balances;
 
     event Staked(
         bytes32 _id,
@@ -55,7 +55,7 @@ contract FlashProtocol is IFlashProtocol {
         _setMatchReceiver(_initialMatchReceiver);
     }
 
-    function setMatchReceiver(address _newMatchReceiver) public onlyMatchReceiver {
+    function setMatchReceiver(address _newMatchReceiver) external override onlyMatchReceiver {
         _setMatchReceiver(_newMatchReceiver);
     }
 
@@ -63,7 +63,7 @@ contract FlashProtocol is IFlashProtocol {
         matchReceiver = _newMatchReceiver;
     }
 
-    function setMatchRatio(uint256 _newMatchRatio) public onlyMatchReceiver {
+    function setMatchRatio(uint256 _newMatchRatio) external override onlyMatchReceiver {
         require(_newMatchRatio >= 0 && _newMatchRatio <= 2000, "FlashProtocol:: INVALID_MATCH_RATIO");
         matchRatio = _newMatchRatio;
     }
@@ -74,7 +74,7 @@ contract FlashProtocol is IFlashProtocol {
         address _receiver,
         bytes calldata _data
     )
-        public
+        external
         override
         returns (
             uint256 mintedAmount,
@@ -115,7 +115,7 @@ contract FlashProtocol is IFlashProtocol {
         emit Staked(id, _amountIn, _expiry, expiration, mintedAmount, staker, _receiver);
     }
 
-    function unstake(bytes32 _id) public override returns (uint256 withdrawAmount) {
+    function unstake(bytes32 _id) external override returns (uint256 withdrawAmount) {
         Stake memory s = stakes[_id];
         require(block.timestamp >= s.expireAfter, "FlashProtol:: STAKE_NOT_EXPIRED");
         balances[s.staker] = balances[s.staker].sub(s.amountIn);
@@ -125,7 +125,7 @@ contract FlashProtocol is IFlashProtocol {
         emit Unstaked(_id, s.amountIn, s.staker);
     }
 
-    function unstakeEarly(bytes32 _id) public override returns (uint256 withdrawAmount) {
+    function unstakeEarly(bytes32 _id) external override returns (uint256 withdrawAmount) {
         Stake memory s = stakes[_id];
         address staker = msg.sender;
         require(s.staker == staker, "FlashProtocol:: INVALID_STAKER");
@@ -140,19 +140,19 @@ contract FlashProtocol is IFlashProtocol {
         emit Unstaked(_id, s.amountIn, staker);
     }
 
-    function getMatchedAmount(uint256 mintedAmount) public view returns (uint256) {
-        return mintedAmount.mul(matchRatio).div(10000);
+    function getMatchedAmount(uint256 _mintedAmount) public override view returns (uint256) {
+        return _mintedAmount.mul(matchRatio).div(10000);
     }
 
-    function getMintAmount(uint256 _amountIn, uint256 _expiry) public view returns (uint256) {
+    function getMintAmount(uint256 _amountIn, uint256 _expiry) public override view returns (uint256) {
         return _amountIn.mul(_expiry).mul(getFPY(_amountIn)).div(PRECISION * SECONDS_IN_1_YEAR);
     }
 
-    function getFPY(uint256 _amountIn) public view returns (uint256) {
+    function getFPY(uint256 _amountIn) public override view returns (uint256) {
         return (PRECISION.sub(getPercentageStaked(_amountIn))).div(2);
     }
 
-    function getPercentageStaked(uint256 _amountIn) public view returns (uint256 percentage) {
+    function getPercentageStaked(uint256 _amountIn) public override view returns (uint256 percentage) {
         uint256 locked = IFlashToken(FLASH_TOKEN).balanceOf(address(this)).add(_amountIn);
         percentage = locked.mul(PRECISION).div(IFlashToken(FLASH_TOKEN).totalSupply());
     }
