@@ -21,17 +21,18 @@ contract FlashProtocol is IFlashProtocol {
         address receiver;
     }
 
+    uint256 public constant override TIMELOCK = 3 days;
+    address public constant override FLASH_TOKEN = 0x91e0cDa1A8A114a6f92551B63Fc8b37645a08390;
+
     uint256 internal constant PRECISION = 1e18;
     uint256 internal constant MAX_FPY_FOR_1_YEAR = 5e17;
-
     uint256 internal constant SECONDS_IN_1_YEAR = 365 * 86400;
-
-    address public override constant FLASH_TOKEN = 0x91e0cDa1A8A114a6f92551B63Fc8b37645a08390;
 
     uint256 public override matchRatio;
     address public override matchReceiver;
 
     mapping(bytes32 => Stake) public override stakes;
+    mapping(LockedFunctions => uint256) public override timelock;
     mapping(address => uint256) public override balances;
 
     event Staked(
@@ -51,21 +52,49 @@ contract FlashProtocol is IFlashProtocol {
         _;
     }
 
+    modifier notLocked(LockedFunctions _lockedFunction) {
+        require(
+            timelock[_lockedFunction] != 0 && timelock[_lockedFunction] <= block.timestamp,
+            "FlashProtocol:: FUNCTION_TIMELOCKED"
+        );
+        _;
+    }
+
     constructor(address _initialMatchReceiver) public {
         _setMatchReceiver(_initialMatchReceiver);
     }
 
-    function setMatchReceiver(address _newMatchReceiver) external override onlyMatchReceiver {
+    function lockFunction(LockedFunctions _lockedFunction) external override onlyMatchReceiver {
+        timelock[_lockedFunction] = type(uint256).max;
+    }
+
+    function unlockFunction(LockedFunctions _lockedFunction) external override onlyMatchReceiver {
+        timelock[_lockedFunction] = block.timestamp + TIMELOCK;
+    }
+
+    function setMatchReceiver(address _newMatchReceiver)
+        external
+        override
+        onlyMatchReceiver
+        notLocked(LockedFunctions.SET_MATCH_RECEIVER)
+    {
         _setMatchReceiver(_newMatchReceiver);
+        timelock[LockedFunctions.SET_MATCH_RECEIVER] = 0;
     }
 
     function _setMatchReceiver(address _newMatchReceiver) internal {
         matchReceiver = _newMatchReceiver;
     }
 
-    function setMatchRatio(uint256 _newMatchRatio) external override onlyMatchReceiver {
+    function setMatchRatio(uint256 _newMatchRatio)
+        external
+        override
+        onlyMatchReceiver
+        notLocked(LockedFunctions.SET_MATCH_RATIO)
+    {
         require(_newMatchRatio >= 0 && _newMatchRatio <= 2000, "FlashProtocol:: INVALID_MATCH_RATIO");
         matchRatio = _newMatchRatio;
+        timelock[LockedFunctions.SET_MATCH_RATIO] = 0;
     }
 
     function stake(

@@ -2,6 +2,10 @@
 pragma solidity 0.6.12;
 
 interface IFlashProtocol {
+    enum LockedFunctions { SET_MATCH_RATIO, SET_MATCH_RECEIVER }
+
+    function TIMELOCK() external view returns (uint256);
+
     function FLASH_TOKEN() external view returns (address);
 
     function matchRatio() external view returns (uint256);
@@ -32,6 +36,12 @@ interface IFlashProtocol {
             uint256 matchedAmount,
             bytes32 id
         );
+
+    function lockFunction(LockedFunctions _lockedFunction) external;
+
+    function unlockFunction(LockedFunctions _lockedFunction) external;
+
+    function timelock(LockedFunctions _lockedFunction) external view returns (uint256);
 
     function balances(address _staker) external view returns (uint256);
 
