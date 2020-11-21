@@ -191,7 +191,7 @@ contract FlashProtocol is IFlashProtocol {
         uint256 _remainingTime,
         uint256 _totalTime
     ) private view returns (uint256 burnAmount) {
-        burnAmount = ((_amount.mul(_remainingTime).mul((getInvFPY(_amount).mul(2)))).div(_totalTime.mul(PRECISION)));
+        burnAmount = ((_amount.mul(_remainingTime).mul((getInvFPY(_amount)))).div(_totalTime.mul(PRECISION)));
     }
 
     function getInvFPY(uint256 _amount) public override view returns (uint256) {
