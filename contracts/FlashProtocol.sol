@@ -190,8 +190,17 @@ contract FlashProtocol is IFlashProtocol {
         uint256 _amount,
         uint256 _remainingTime,
         uint256 _totalTime
-    ) private pure returns (uint256 burnAmount) {
-        burnAmount = ((_amount.mul(_remainingTime)).div(_totalTime));
+    ) private view returns (uint256 burnAmount) {
+        burnAmount = _amount.mul(_remainingTime).mul(getInvFPY(_amount)).div(_totalTime.mul(PRECISION));
+    }
+
+    function getInvFPY(uint256 _amount) public override view returns (uint256) {
+        return PRECISION.sub(getPercentageUnStaked(_amount));
+    }
+
+    function getPercentageUnStaked(uint256 _amount) public override view returns (uint256 percentage) {
+        uint256 locked = IFlashToken(FLASH_TOKEN).balanceOf(address(this)).sub(_amount);
+        percentage = locked.mul(PRECISION).div(IFlashToken(FLASH_TOKEN).totalSupply());
     }
 
     function calculateMaxStakePeriod(uint256 _amountIn) private view returns (uint256) {
