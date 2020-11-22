@@ -195,7 +195,7 @@ contract FlashProtocol is IFlashProtocol {
     }
 
     function getInvFPY(uint256 _amount) public override view returns (uint256) {
-        return (PRECISION.sub(getPercentageUnStaked(_amount)));
+        return PRECISION.sub(getPercentageUnStaked(_amount));
     }
 
     function getPercentageUnStaked(uint256 _amount) public override view returns (uint256 percentage) {
