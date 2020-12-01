@@ -92,7 +92,8 @@ contract FlashProtocol is IFlashProtocol {
         onlyMatchReceiver
         notLocked(LockedFunctions.SET_MATCH_RATIO)
     {
-        require(_newMatchRatio >= 0 && _newMatchRatio <= 2000, "FlashProtocol:: INVALID_MATCH_RATIO");
+        // can be 0 and cannot be above 20%
+        require(_newMatchRatio <= 2000, "FlashProtocol:: INVALID_MATCH_RATIO");
         matchRatio = _newMatchRatio;
         timelock[LockedFunctions.SET_MATCH_RATIO] = 0;
     }
