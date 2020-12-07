@@ -10,8 +10,8 @@ const overrides = {
     gasLimit: 9999999
 }
 
-export async function tokenFixture([wallet]: Wallet[],_: providers.Web3Provider ) : Promise<ethers.Contract> {
-    const token = await deployContract(wallet, FlashTokenArtifact, [wallet.address, wallet.address], overrides)
+export async function tokenFixture([wallet]: Wallet[],_: providers.Web3Provider, address:String ) : Promise<ethers.Contract> {
+    const token = await deployContract(wallet, FlashTokenArtifact, [wallet.address, address], overrides)
     await mintTokens(token, wallet.address);
     return token
 }
