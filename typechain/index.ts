@@ -3,3 +3,5 @@
 /* eslint-disable */
 export {FlashProtocolFactory} from "./FlashProtocolFactory";
 export type {FlashProtocol} from "./FlashProtocol";
+export {FlashTokenFactory} from "./FlashTokenFactory";
+export type {FlashToken} from "./FlashToken";
