@@ -1,17 +1,8 @@
-import {
-  defaultAbiCoder,
-  hexlify,
-  keccak256,
-  toUtf8Bytes,
-  solidityPack
-} from "ethers/lib/utils";
 import { expect, use } from "chai";
 import { deployContract, MockProvider, solidity, createFixtureLoader, loadFixture } from "ethereum-waffle";
 import FlashProtocolArtifact from "../artifacts/contracts/FlashProtocol.sol/FlashProtocol.json";
 import FlashTokenArtifact from "../artifacts/contracts/tests/flash-token/FlashToken.sol/FlashToken.json"
-import { constants, ethers, providers, ContractFactory, utils } from "ethers";
-// import { ecsign } from "ethereumjs-util";
-import { tokenFixture } from "./utils/fixtures"
+import { constants, ethers, utils } from "ethers";
 
 use(solidity);
 
