@@ -35,7 +35,7 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
     "setMatchRatio(uint256)": FunctionFragment;
     "setMatchReceiver(address)": FunctionFragment;
     "stake(uint256,uint256,address,bytes)": FunctionFragment;
-    "stakeWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32,bytes)": FunctionFragment;
+    "stakeWithPermit(address,uint256,uint256,uint8,bytes32,bytes32,bytes)": FunctionFragment;
     "stakes(bytes32)": FunctionFragment;
     "timelock(uint8)": FunctionFragment;
     "unlockFunction(uint8)": FunctionFragment;
@@ -90,14 +90,11 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
     values: [BigNumberish, BigNumberish, string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "stakeWithAuthorization",
+    functionFragment: "stakeWithPermit",
     values: [
       string,
-      string,
       BigNumberish,
       BigNumberish,
-      BigNumberish,
-      BytesLike,
       BigNumberish,
       BytesLike,
       BytesLike,
@@ -157,7 +154,7 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "stakeWithAuthorization",
+    functionFragment: "stakeWithPermit",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stakes", data: BytesLike): Result;
@@ -363,13 +360,10 @@ export class FlashProtocol extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    stakeWithAuthorization(
-      _from: string,
+    stakeWithPermit(
       _receiver: string,
       _amountIn: BigNumberish,
-      _validAfter: BigNumberish,
       _expiry: BigNumberish,
-      _nonce: BytesLike,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -377,13 +371,10 @@ export class FlashProtocol extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "stakeWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32,bytes)"(
-      _from: string,
+    "stakeWithPermit(address,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
       _receiver: string,
       _amountIn: BigNumberish,
-      _validAfter: BigNumberish,
       _expiry: BigNumberish,
-      _nonce: BytesLike,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -583,13 +574,10 @@ export class FlashProtocol extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  stakeWithAuthorization(
-    _from: string,
+  stakeWithPermit(
     _receiver: string,
     _amountIn: BigNumberish,
-    _validAfter: BigNumberish,
     _expiry: BigNumberish,
-    _nonce: BytesLike,
     _v: BigNumberish,
     _r: BytesLike,
     _s: BytesLike,
@@ -597,13 +585,10 @@ export class FlashProtocol extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "stakeWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32,bytes)"(
-    _from: string,
+  "stakeWithPermit(address,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
     _receiver: string,
     _amountIn: BigNumberish,
-    _validAfter: BigNumberish,
     _expiry: BigNumberish,
-    _nonce: BytesLike,
     _v: BigNumberish,
     _r: BytesLike,
     _s: BytesLike,
@@ -807,13 +792,10 @@ export class FlashProtocol extends Contract {
       2: string;
     }>;
 
-    stakeWithAuthorization(
-      _from: string,
+    stakeWithPermit(
       _receiver: string,
       _amountIn: BigNumberish,
-      _validAfter: BigNumberish,
       _expiry: BigNumberish,
-      _nonce: BytesLike,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -828,13 +810,10 @@ export class FlashProtocol extends Contract {
       2: string;
     }>;
 
-    "stakeWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32,bytes)"(
-      _from: string,
+    "stakeWithPermit(address,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
       _receiver: string,
       _amountIn: BigNumberish,
-      _validAfter: BigNumberish,
       _expiry: BigNumberish,
-      _nonce: BytesLike,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -1043,13 +1022,10 @@ export class FlashProtocol extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    stakeWithAuthorization(
-      _from: string,
+    stakeWithPermit(
       _receiver: string,
       _amountIn: BigNumberish,
-      _validAfter: BigNumberish,
       _expiry: BigNumberish,
-      _nonce: BytesLike,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -1057,13 +1033,10 @@ export class FlashProtocol extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "stakeWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32,bytes)"(
-      _from: string,
+    "stakeWithPermit(address,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
       _receiver: string,
       _amountIn: BigNumberish,
-      _validAfter: BigNumberish,
       _expiry: BigNumberish,
-      _nonce: BytesLike,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -1225,13 +1198,10 @@ export class FlashProtocol extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    stakeWithAuthorization(
-      _from: string,
+    stakeWithPermit(
       _receiver: string,
       _amountIn: BigNumberish,
-      _validAfter: BigNumberish,
       _expiry: BigNumberish,
-      _nonce: BytesLike,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -1239,13 +1209,10 @@ export class FlashProtocol extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "stakeWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32,bytes)"(
-      _from: string,
+    "stakeWithPermit(address,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
       _receiver: string,
       _amountIn: BigNumberish,
-      _validAfter: BigNumberish,
       _expiry: BigNumberish,
-      _nonce: BytesLike,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,

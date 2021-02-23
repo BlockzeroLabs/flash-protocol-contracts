@@ -93,11 +93,11 @@ contract FlashProtocol is IFlashProtocol {
         onlyMatchReceiver
         notLocked(LockedFunctions.SET_MATCH_RATIO)
     {
-        _setMatchRatio(_newMathRatio);
+        _setMatchRatio(_newMatchRatio);
         timelock[LockedFunctions.SET_MATCH_RATIO] = 0;
     }
 
-    function _setMatchRatio(uint256 _newMathRatio) internal {
+    function _setMatchRatio(uint256 _newMatchRatio) internal {
         require(_newMatchRatio >= 0 && _newMatchRatio <= 2000, "FlashProtocol:: INVALID_MATCH_RATIO");
         matchRatio = _newMatchRatio;
     }
@@ -128,11 +128,9 @@ contract FlashProtocol is IFlashProtocol {
     }
 
     function stakeWithPermit(
-        address _from,
         address _receiver,
         uint256 _amountIn,
         uint256 _expiry,
-        bytes32 _nonce,
         uint8 _v,
         bytes32 _r,
         bytes32 _s,
@@ -150,11 +148,11 @@ contract FlashProtocol is IFlashProtocol {
 
         require(_receiver != address(this), "FlashProtocol:: INVALID_ADDRESS");
 
-        require(_from == msg.sender, "FlashProtocol:: INVALID_SENDER");
+        address staker = msg.sender;
 
-        IFlashToken(FLASH_TOKEN).permit(_from, address(this), type(uint256).max, _expiry, _v, _r, _s);
+        IFlashToken(FLASH_TOKEN).permit(staker, address(this), type(uint256).max, _expiry, _v, _r, _s);
 
-        IFlashToken(FLASH_TOKEN).transferFrom(_from, address(this), _amountIn);
+        IFlashToken(FLASH_TOKEN).transferFrom(staker, address(this), _amountIn);
 
         (mintedAmount, matchedAmount, id) = _stake(_amountIn, _expiry, _receiver, _data);
     }
