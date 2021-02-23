@@ -127,11 +127,10 @@ contract FlashProtocol is IFlashProtocol {
         (mintedAmount, matchedAmount, id) = _stake(_amountIn, _expiry, _receiver, _data);
     }
 
-    function stakeWithAuthorization(
+    function stakeWithPermit(
         address _from,
         address _receiver,
         uint256 _amountIn,
-        uint256 _validAfter,
         uint256 _expiry,
         bytes32 _nonce,
         uint8 _v,
@@ -153,18 +152,10 @@ contract FlashProtocol is IFlashProtocol {
 
         require(_from == msg.sender, "FlashProtocol:: INVALID_SENDER");
 
-        IFlashToken(FLASH_TOKEN).transferWithAuthorization(
-            _from,
-            address(this),
-            _amountIn,
-            _validAfter,
-            _expiry,
-            _nonce,
-            _v,
-            _r,
-            _s
-        );
+        IFlashToken(FLASH_TOKEN).permit(_from, address(this), _amountIn, _expiry, _v, _r, _s);
 
+        IFlashToken(FLASH_TOKEN).transferFrom(_from, address(this), _amountIn);
+        
         (mintedAmount, matchedAmount, id) = _stake(_amountIn, _expiry, _receiver, _data);
     }
 
