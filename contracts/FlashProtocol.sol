@@ -124,7 +124,7 @@ contract FlashProtocol is IFlashProtocol {
 
         IFlashToken(FLASH_TOKEN).transferFrom(staker, address(this), _amountIn);
 
-        (mintedAmount, matchedAmount, id) = _stake(_amountIn, _expiry, _receiver, _data);
+        (mintedAmount, matchedAmount, id) = _stake(_amountIn, _expiry, staker, _receiver, _data);
     }
 
     function stakeWithPermit(
@@ -154,12 +154,13 @@ contract FlashProtocol is IFlashProtocol {
 
         IFlashToken(FLASH_TOKEN).transferFrom(staker, address(this), _amountIn);
 
-        (mintedAmount, matchedAmount, id) = _stake(_amountIn, _expiry, _receiver, _data);
+        (mintedAmount, matchedAmount, id) = _stake(_amountIn, _expiry, staker, _receiver, _data);
     }
 
     function _stake(
         uint256 _amountIn,
         uint256 _expiry,
+        address _staker,
         address _receiver,
         bytes calldata _data
     )
@@ -172,12 +173,10 @@ contract FlashProtocol is IFlashProtocol {
     {
         require(_expiry <= calculateMaxStakePeriod(_amountIn), "FlashProtocol:: MAX_STAKE_PERIOD_EXCEEDS");
 
-        address staker = msg.sender;
-
         uint256 expiration = block.timestamp.add(_expiry);
-        balances[staker] = balances[staker].add(_amountIn);
+        balances[_staker] = balances[_staker].add(_amountIn);
 
-        id = keccak256(abi.encodePacked(_amountIn, _expiry, _receiver, staker, block.timestamp));
+        id = keccak256(abi.encodePacked(_amountIn, _expiry, _receiver, _staker, block.timestamp));
 
         require(stakes[id].staker == address(0), "FlashProtocol:: STAKE_EXISTS");
 
@@ -187,13 +186,13 @@ contract FlashProtocol is IFlashProtocol {
         IFlashToken(FLASH_TOKEN).mint(_receiver, mintedAmount);
         IFlashToken(FLASH_TOKEN).mint(matchReceiver, matchedAmount);
 
-        stakes[id] = Stake(_amountIn, _expiry, expiration, mintedAmount, staker, _receiver);
+        stakes[id] = Stake(_amountIn, _expiry, expiration, mintedAmount, _staker, _receiver);
 
         if (_receiver.isContract()) {
-            IFlashReceiver(_receiver).receiveFlash(id, _amountIn, expiration, mintedAmount, staker, _data);
+            IFlashReceiver(_receiver).receiveFlash(id, _amountIn, expiration, mintedAmount, _staker, _data);
         }
 
-        emit Staked(id, _amountIn, _expiry, expiration, mintedAmount, staker, _receiver);
+        emit Staked(id, _amountIn, _expiry, expiration, mintedAmount, _staker, _receiver);
     }
 
     function unstake(bytes32 _id) external override returns (uint256 withdrawAmount) {
