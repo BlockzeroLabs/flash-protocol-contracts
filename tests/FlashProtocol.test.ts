@@ -67,31 +67,31 @@ describe("Flash token", async () => {
     }, 3000)
   })
 
-  it('unstakeEarly', async () => {
-    let protocol = FlashProtocol.connect(wallet)
+  // it('unstakeEarly', async () => {
+  //   let protocol = FlashProtocol.connect(wallet)
 
-    let bytes32Param = await ethers.utils.formatBytes32String("0x");
+  //   let bytes32Param = await ethers.utils.formatBytes32String("0x");
 
-    let tx = await protocol.stake("100000000000000000", "10", walletTo.address, bytes32Param)
+  //   let tx = await protocol.stake("100000000000000000", "10", walletTo.address, bytes32Param)
 
-    let receipt = await provider.getTransaction(tx.hash)
+  //   let receipt = await provider.getTransaction(tx.hash)
 
-    let block = await provider.getBlock(String(receipt.blockHash))
+  //   let block = await provider.getBlock(String(receipt.blockHash))
 
-    let id = await utils.solidityKeccak256(["uint256", "uint256", "address", "address", "uint256"],
-      [
-        "100000000000000000",
-        "1",
-        walletTo.address,
-        wallet.address,
-        block.timestamp
-      ]
-    )
+  //   let id = await utils.solidityKeccak256(["uint256", "uint256", "address", "address", "uint256"],
+  //     [
+  //       "100000000000000000",
+  //       "1",
+  //       walletTo.address,
+  //       wallet.address,
+  //       block.timestamp
+  //     ]
+  //   )
 
-    await expect(
-      protocol.unstakeEarly(id)
-    ).to.emit(FlashProtocol, "Unstaked");
-  })
+  //   await expect(
+  //     protocol.unstakeEarly(id)
+  //   ).to.emit(FlashProtocol, "Unstaked");
+  // })
 
   it('setMatchReceiver -> fail', async()=>{
     await expect( FlashProtocol.setMatchReceiver(wallet.address)).to.be.revertedWith('FlashProtocol:: FUNCTION_TIMELOCKED');

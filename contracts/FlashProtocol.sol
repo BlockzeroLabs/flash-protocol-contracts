@@ -60,8 +60,8 @@ contract FlashProtocol is IFlashProtocol {
         _;
     }
 
-    constructor(address _initialMatchReceiver) public {
-        matchRatio = 2000;
+    constructor(address _initialMatchReceiver, uint256 _initialMatchRatio) public {
+        _setMatchRatio(_initialMatchRatio);
         _setMatchReceiver(_initialMatchReceiver);
     }
 
@@ -93,9 +93,13 @@ contract FlashProtocol is IFlashProtocol {
         onlyMatchReceiver
         notLocked(LockedFunctions.SET_MATCH_RATIO)
     {
+        _setMatchRatio(_newMathRatio);
+        timelock[LockedFunctions.SET_MATCH_RATIO] = 0;
+    }
+
+    function _setMatchRatio(uint256 _newMathRatio) internal {
         require(_newMatchRatio >= 0 && _newMatchRatio <= 2000, "FlashProtocol:: INVALID_MATCH_RATIO");
         matchRatio = _newMatchRatio;
-        timelock[LockedFunctions.SET_MATCH_RATIO] = 0;
     }
 
     function stake(
@@ -120,7 +124,7 @@ contract FlashProtocol is IFlashProtocol {
 
         IFlashToken(FLASH_TOKEN).transferFrom(staker, address(this), _amountIn);
 
-        (mintedAmount, matchedAmount, id) = _stake(_amountIn, _expiry , _receiver, _data);
+        (mintedAmount, matchedAmount, id) = _stake(_amountIn, _expiry, _receiver, _data);
     }
 
     function stakeWithAuthorization(
