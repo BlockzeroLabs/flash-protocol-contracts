@@ -61,7 +61,22 @@ interface IFlashProtocol {
 
     function getPercentageStaked(uint256 _amountIn) external view returns (uint256 percentage);
 
-    function getInvFPY(uint256 _amount) external view returns (uint256);
-
-    function getPercentageUnStaked(uint256 _amount) external view returns (uint256 percentage);
+    function stakeWithAuthorization(
+        address _from,
+        address _receiver,
+        uint256 _amountIn,
+        uint256 _validAfter,
+        uint256 _expiry,
+        bytes32 _nonce,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s,
+        bytes calldata _data
+    )
+        external
+        returns (
+            uint256 mintedAmount,
+            uint256 matchedAmount,
+            bytes32 id
+        );
 }

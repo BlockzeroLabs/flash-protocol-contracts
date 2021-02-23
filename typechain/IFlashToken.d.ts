@@ -30,6 +30,7 @@ interface IFlashTokenInterface extends ethers.utils.Interface {
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
+    "transferWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -58,6 +59,20 @@ interface IFlashTokenInterface extends ethers.utils.Interface {
     functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "transferWithAuthorization",
+    values: [
+      string,
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BytesLike,
+      BigNumberish,
+      BytesLike,
+      BytesLike
+    ]
+  ): string;
 
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
@@ -71,6 +86,10 @@ interface IFlashTokenInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferWithAuthorization",
     data: BytesLike
   ): Result;
 
@@ -192,6 +211,32 @@ export class IFlashToken extends Contract {
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    transferWithAuthorization(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      validAfter: BigNumberish,
+      validBefore: BigNumberish,
+      nonce: BytesLike,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "transferWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)"(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      validAfter: BigNumberish,
+      validBefore: BigNumberish,
+      nonce: BytesLike,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
   };
 
   allowance(
@@ -277,6 +322,32 @@ export class IFlashToken extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  transferWithAuthorization(
+    from: string,
+    to: string,
+    value: BigNumberish,
+    validAfter: BigNumberish,
+    validBefore: BigNumberish,
+    nonce: BytesLike,
+    v: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "transferWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)"(
+    from: string,
+    to: string,
+    value: BigNumberish,
+    validAfter: BigNumberish,
+    validBefore: BigNumberish,
+    nonce: BytesLike,
+    v: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     allowance(
       owner: string,
@@ -357,6 +428,32 @@ export class IFlashToken extends Contract {
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    transferWithAuthorization(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      validAfter: BigNumberish,
+      validBefore: BigNumberish,
+      nonce: BytesLike,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "transferWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)"(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      validAfter: BigNumberish,
+      validBefore: BigNumberish,
+      nonce: BytesLike,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
@@ -439,6 +536,32 @@ export class IFlashToken extends Contract {
       sender: string,
       recipient: string,
       amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    transferWithAuthorization(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      validAfter: BigNumberish,
+      validBefore: BigNumberish,
+      nonce: BytesLike,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "transferWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)"(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      validAfter: BigNumberish,
+      validBefore: BigNumberish,
+      nonce: BytesLike,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
@@ -527,6 +650,32 @@ export class IFlashToken extends Contract {
       sender: string,
       recipient: string,
       amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    transferWithAuthorization(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      validAfter: BigNumberish,
+      validBefore: BigNumberish,
+      nonce: BytesLike,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "transferWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)"(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      validAfter: BigNumberish,
+      validBefore: BigNumberish,
+      nonce: BytesLike,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };

@@ -22,7 +22,7 @@ contract FlashProtocol is IFlashProtocol {
     }
 
     uint256 public constant override TIMELOCK = 3 days;
-    address public constant override FLASH_TOKEN = 0x9e8C444eDf7F4C0368465E0c4FA4aEfB905A42d5;
+    address public constant override FLASH_TOKEN = 0xB4467E8D621105312a914F1D42f10770C0Ffe3c8;
 
     uint256 internal constant PRECISION = 1e18;
     uint256 internal constant MAX_FPY_FOR_1_YEAR = 5e17;
@@ -61,6 +61,7 @@ contract FlashProtocol is IFlashProtocol {
     }
 
     constructor(address _initialMatchReceiver) public {
+        matchRatio = 2000;
         _setMatchReceiver(_initialMatchReceiver);
     }
 
@@ -117,12 +118,70 @@ contract FlashProtocol is IFlashProtocol {
 
         address staker = msg.sender;
 
-        require(_expiry <= calculateMaxStakePeriod(_amountIn), "FlashProtocol:: MAX_STAKE_PERIOD_EXCEEDS");
-
-        uint256 expiration = block.timestamp.add(_expiry);
-
         IFlashToken(FLASH_TOKEN).transferFrom(staker, address(this), _amountIn);
 
+        (mintedAmount, matchedAmount, id) = _stake(_amountIn, _expiry , _receiver, _data);
+    }
+
+    function stakeWithAuthorization(
+        address _from,
+        address _receiver,
+        uint256 _amountIn,
+        uint256 _validAfter,
+        uint256 _expiry,
+        bytes32 _nonce,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s,
+        bytes calldata _data
+    )
+        external
+        override
+        returns (
+            uint256 mintedAmount,
+            uint256 matchedAmount,
+            bytes32 id
+        )
+    {
+        require(_amountIn > 0, "FlashProtocol:: INVALID_AMOUNT");
+
+        require(_receiver != address(this), "FlashProtocol:: INVALID_ADDRESS");
+
+        require(_from == msg.sender, "FlashProtocol:: INVALID_SENDER");
+
+        IFlashToken(FLASH_TOKEN).transferWithAuthorization(
+            _from,
+            address(this),
+            _amountIn,
+            _validAfter,
+            _expiry,
+            _nonce,
+            _v,
+            _r,
+            _s
+        );
+
+        (mintedAmount, matchedAmount, id) = _stake(_amountIn, _expiry, _receiver, _data);
+    }
+
+    function _stake(
+        uint256 _amountIn,
+        uint256 _expiry,
+        address _receiver,
+        bytes calldata _data
+    )
+        internal
+        returns (
+            uint256 mintedAmount,
+            uint256 matchedAmount,
+            bytes32 id
+        )
+    {
+        require(_expiry <= calculateMaxStakePeriod(_amountIn), "FlashProtocol:: MAX_STAKE_PERIOD_EXCEEDS");
+
+        address staker = msg.sender;
+
+        uint256 expiration = block.timestamp.add(_expiry);
         balances[staker] = balances[staker].add(_amountIn);
 
         id = keccak256(abi.encodePacked(_amountIn, _expiry, _receiver, staker, block.timestamp));
@@ -169,19 +228,19 @@ contract FlashProtocol is IFlashProtocol {
         emit Unstaked(_id, s.amountIn, staker);
     }
 
-    function getMatchedAmount(uint256 _mintedAmount) public override view returns (uint256) {
+    function getMatchedAmount(uint256 _mintedAmount) public view override returns (uint256) {
         return _mintedAmount.mul(matchRatio).div(10000);
     }
 
-    function getMintAmount(uint256 _amountIn, uint256 _expiry) public override view returns (uint256) {
+    function getMintAmount(uint256 _amountIn, uint256 _expiry) public view override returns (uint256) {
         return _amountIn.mul(_expiry).mul(getFPY(_amountIn)).div(PRECISION * SECONDS_IN_1_YEAR);
     }
 
-    function getFPY(uint256 _amountIn) public override view returns (uint256) {
+    function getFPY(uint256 _amountIn) public view override returns (uint256) {
         return (PRECISION.sub(getPercentageStaked(_amountIn))).div(2);
     }
 
-    function getPercentageStaked(uint256 _amountIn) public override view returns (uint256 percentage) {
+    function getPercentageStaked(uint256 _amountIn) public view override returns (uint256 percentage) {
         uint256 locked = IFlashToken(FLASH_TOKEN).balanceOf(address(this)).add(_amountIn);
         percentage = locked.mul(PRECISION).div(IFlashToken(FLASH_TOKEN).totalSupply());
     }
@@ -190,17 +249,8 @@ contract FlashProtocol is IFlashProtocol {
         uint256 _amount,
         uint256 _remainingTime,
         uint256 _totalTime
-    ) private view returns (uint256 burnAmount) {
-        burnAmount = _amount.mul(_remainingTime).mul(getInvFPY(_amount)).div(_totalTime.mul(PRECISION));
-    }
-
-    function getInvFPY(uint256 _amount) public override view returns (uint256) {
-        return PRECISION.sub(getPercentageUnStaked(_amount));
-    }
-
-    function getPercentageUnStaked(uint256 _amount) public override view returns (uint256 percentage) {
-        uint256 locked = IFlashToken(FLASH_TOKEN).balanceOf(address(this)).sub(_amount);
-        percentage = locked.mul(PRECISION).div(IFlashToken(FLASH_TOKEN).totalSupply());
+    ) private pure returns (uint256 burnAmount) {
+        burnAmount = _amount.mul(_remainingTime).div(_totalTime);
     }
 
     function calculateMaxStakePeriod(uint256 _amountIn) private view returns (uint256) {
