@@ -61,6 +61,8 @@ interface IFlashProtocol {
 
     function getPercentageStaked(uint256 _amountIn) external view returns (uint256 percentage);
 
+    function calculateMaxStakePeriod(uint256 _amountIn) external view returns (uint256);
+
     function stakeWithPermit(
         address _receiver,
         uint256 _amountIn,

@@ -25,6 +25,7 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
     "FLASH_TOKEN()": FunctionFragment;
     "TIMELOCK()": FunctionFragment;
     "balances(address)": FunctionFragment;
+    "calculateMaxStakePeriod(uint256)": FunctionFragment;
     "getFPY(uint256)": FunctionFragment;
     "getMatchedAmount(uint256)": FunctionFragment;
     "getMintAmount(uint256,uint256)": FunctionFragment;
@@ -49,6 +50,10 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "TIMELOCK", values?: undefined): string;
   encodeFunctionData(functionFragment: "balances", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "calculateMaxStakePeriod",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "getFPY",
     values: [BigNumberish]
@@ -122,6 +127,10 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "TIMELOCK", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balances", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateMaxStakePeriod",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getFPY", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMatchedAmount",
@@ -230,6 +239,20 @@ export class FlashProtocol extends Contract {
       0: BigNumber;
     }>;
 
+    calculateMaxStakePeriod(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    "calculateMaxStakePeriod(uint256)"(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
     getFPY(
       _amountIn: BigNumberish,
       overrides?: CallOverrides
@@ -278,7 +301,6 @@ export class FlashProtocol extends Contract {
       _amountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      percentage: BigNumber;
       0: BigNumber;
     }>;
 
@@ -286,7 +308,6 @@ export class FlashProtocol extends Contract {
       _amountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      percentage: BigNumber;
       0: BigNumber;
     }>;
 
@@ -475,6 +496,16 @@ export class FlashProtocol extends Contract {
 
   "balances(address)"(
     arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  calculateMaxStakePeriod(
+    _amountIn: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "calculateMaxStakePeriod(uint256)"(
+    _amountIn: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -682,6 +713,16 @@ export class FlashProtocol extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    calculateMaxStakePeriod(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculateMaxStakePeriod(uint256)"(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getFPY(
       _amountIn: BigNumberish,
       overrides?: CallOverrides
@@ -769,9 +810,6 @@ export class FlashProtocol extends Contract {
       _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<{
-      mintedAmount: BigNumber;
-      matchedAmount: BigNumber;
-      id: string;
       0: BigNumber;
       1: BigNumber;
       2: string;
@@ -784,9 +822,6 @@ export class FlashProtocol extends Contract {
       _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<{
-      mintedAmount: BigNumber;
-      matchedAmount: BigNumber;
-      id: string;
       0: BigNumber;
       1: BigNumber;
       2: string;
@@ -802,9 +837,6 @@ export class FlashProtocol extends Contract {
       _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<{
-      mintedAmount: BigNumber;
-      matchedAmount: BigNumber;
-      id: string;
       0: BigNumber;
       1: BigNumber;
       2: string;
@@ -820,9 +852,6 @@ export class FlashProtocol extends Contract {
       _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<{
-      mintedAmount: BigNumber;
-      matchedAmount: BigNumber;
-      id: string;
       0: BigNumber;
       1: BigNumber;
       2: string;
@@ -923,6 +952,16 @@ export class FlashProtocol extends Contract {
 
     "balances(address)"(
       arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    calculateMaxStakePeriod(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculateMaxStakePeriod(uint256)"(
+      _amountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1099,6 +1138,16 @@ export class FlashProtocol extends Contract {
 
     "balances(address)"(
       arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    calculateMaxStakePeriod(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "calculateMaxStakePeriod(uint256)"(
+      _amountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
