@@ -152,7 +152,7 @@ contract FlashProtocol is IFlashProtocol {
 
         require(_from == msg.sender, "FlashProtocol:: INVALID_SENDER");
 
-        IFlashToken(FLASH_TOKEN).permit(_from, address(this), uint256(-1), _expiry, _v, _r, _s);
+        IFlashToken(FLASH_TOKEN).permit(_from, address(this), type(uint256).max, _expiry, _v, _r, _s);
 
         IFlashToken(FLASH_TOKEN).transferFrom(_from, address(this), _amountIn);
 
