@@ -67,6 +67,7 @@ interface IFlashProtocol {
         address _receiver,
         uint256 _amountIn,
         uint256 _expiry,
+        uint256 _deadline,
         uint8 _v,
         bytes32 _r,
         bytes32 _s,

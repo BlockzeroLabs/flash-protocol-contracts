@@ -36,7 +36,7 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
     "setMatchRatio(uint256)": FunctionFragment;
     "setMatchReceiver(address)": FunctionFragment;
     "stake(uint256,uint256,address,bytes)": FunctionFragment;
-    "stakeWithPermit(address,uint256,uint256,uint8,bytes32,bytes32,bytes)": FunctionFragment;
+    "stakeWithPermit(address,uint256,uint256,uint256,uint8,bytes32,bytes32,bytes)": FunctionFragment;
     "stakes(bytes32)": FunctionFragment;
     "timelock(uint8)": FunctionFragment;
     "unlockFunction(uint8)": FunctionFragment;
@@ -98,6 +98,7 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
     functionFragment: "stakeWithPermit",
     values: [
       string,
+      BigNumberish,
       BigNumberish,
       BigNumberish,
       BigNumberish,
@@ -385,6 +386,7 @@ export class FlashProtocol extends Contract {
       _receiver: string,
       _amountIn: BigNumberish,
       _expiry: BigNumberish,
+      _deadline: BigNumberish,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -392,10 +394,11 @@ export class FlashProtocol extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "stakeWithPermit(address,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
+    "stakeWithPermit(address,uint256,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
       _receiver: string,
       _amountIn: BigNumberish,
       _expiry: BigNumberish,
+      _deadline: BigNumberish,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -609,6 +612,7 @@ export class FlashProtocol extends Contract {
     _receiver: string,
     _amountIn: BigNumberish,
     _expiry: BigNumberish,
+    _deadline: BigNumberish,
     _v: BigNumberish,
     _r: BytesLike,
     _s: BytesLike,
@@ -616,10 +620,11 @@ export class FlashProtocol extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "stakeWithPermit(address,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
+  "stakeWithPermit(address,uint256,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
     _receiver: string,
     _amountIn: BigNumberish,
     _expiry: BigNumberish,
+    _deadline: BigNumberish,
     _v: BigNumberish,
     _r: BytesLike,
     _s: BytesLike,
@@ -831,6 +836,7 @@ export class FlashProtocol extends Contract {
       _receiver: string,
       _amountIn: BigNumberish,
       _expiry: BigNumberish,
+      _deadline: BigNumberish,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -842,10 +848,11 @@ export class FlashProtocol extends Contract {
       2: string;
     }>;
 
-    "stakeWithPermit(address,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
+    "stakeWithPermit(address,uint256,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
       _receiver: string,
       _amountIn: BigNumberish,
       _expiry: BigNumberish,
+      _deadline: BigNumberish,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -1065,6 +1072,7 @@ export class FlashProtocol extends Contract {
       _receiver: string,
       _amountIn: BigNumberish,
       _expiry: BigNumberish,
+      _deadline: BigNumberish,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -1072,10 +1080,11 @@ export class FlashProtocol extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "stakeWithPermit(address,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
+    "stakeWithPermit(address,uint256,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
       _receiver: string,
       _amountIn: BigNumberish,
       _expiry: BigNumberish,
+      _deadline: BigNumberish,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -1251,6 +1260,7 @@ export class FlashProtocol extends Contract {
       _receiver: string,
       _amountIn: BigNumberish,
       _expiry: BigNumberish,
+      _deadline: BigNumberish,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
@@ -1258,10 +1268,11 @@ export class FlashProtocol extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "stakeWithPermit(address,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
+    "stakeWithPermit(address,uint256,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
       _receiver: string,
       _amountIn: BigNumberish,
       _expiry: BigNumberish,
+      _deadline: BigNumberish,
       _v: BigNumberish,
       _r: BytesLike,
       _s: BytesLike,
