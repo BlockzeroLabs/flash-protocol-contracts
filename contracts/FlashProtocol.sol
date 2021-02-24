@@ -137,8 +137,7 @@ contract FlashProtocol is IFlashProtocol {
             bytes32
         )
     {
-        address staker = msg.sender;
-        IFlashToken(FLASH_TOKEN).permit(staker, address(this), type(uint256).max, _deadline, _v, _r, _s);
+        IFlashToken(FLASH_TOKEN).permit(msg.sender, address(this), type(uint256).max, _deadline, _v, _r, _s);
         return _stake(_amountIn, _expiry, _receiver, _data);
     }
 
