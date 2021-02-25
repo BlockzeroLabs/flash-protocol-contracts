@@ -60,7 +60,8 @@ contract FlashProtocol is IFlashProtocol {
         _;
     }
 
-    constructor(address _initialMatchReceiver) public {
+    constructor(address _initialMatchReceiver, uint256 _initialMatchRatio) public {
+        _setMatchRatio(_initialMatchRatio);
         _setMatchReceiver(_initialMatchReceiver);
     }
 
@@ -92,10 +93,15 @@ contract FlashProtocol is IFlashProtocol {
         onlyMatchReceiver
         notLocked(LockedFunctions.SET_MATCH_RATIO)
     {
+        _setMatchRatio(_newMatchRatio);
+        timelock[LockedFunctions.SET_MATCH_RATIO] = 0;
+    }
+
+    function _setMatchRatio(uint256 _newMatchRatio) internal {
+        require(_newMatchRatio >= 0 && _newMatchRatio <= 2000, "FlashProtocol:: INVALID_MATCH_RATIO");
         // can be 0 and cannot be above 20%
         require(_newMatchRatio <= 2000, "FlashProtocol:: INVALID_MATCH_RATIO");
         matchRatio = _newMatchRatio;
-        timelock[LockedFunctions.SET_MATCH_RATIO] = 0;
     }
 
     function stake(
@@ -107,23 +113,58 @@ contract FlashProtocol is IFlashProtocol {
         external
         override
         returns (
+            uint256,
+            uint256,
+            bytes32
+        )
+    {
+        return _stake(_amountIn, _expiry, _receiver, _data);
+    }
+
+    function stakeWithPermit(
+        address _receiver,
+        uint256 _amountIn,
+        uint256 _expiry,
+        uint256 _deadline,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s,
+        bytes calldata _data
+    )
+        external
+        override
+        returns (
+            uint256,
+            uint256,
+            bytes32
+        )
+    {
+        IFlashToken(FLASH_TOKEN).permit(msg.sender, address(this), type(uint256).max, _deadline, _v, _r, _s);
+        return _stake(_amountIn, _expiry, _receiver, _data);
+    }
+
+    function _stake(
+        uint256 _amountIn,
+        uint256 _expiry,
+        address _receiver,
+        bytes calldata _data
+    )
+        internal
+        returns (
             uint256 mintedAmount,
             uint256 matchedAmount,
             bytes32 id
         )
     {
         require(_amountIn > 0, "FlashProtocol:: INVALID_AMOUNT");
-
         require(_receiver != address(this), "FlashProtocol:: INVALID_ADDRESS");
+        require(_expiry <= calculateMaxStakePeriod(_amountIn), "FlashProtocol:: MAX_STAKE_PERIOD_EXCEEDS");
 
         address staker = msg.sender;
 
-        require(_expiry <= calculateMaxStakePeriod(_amountIn), "FlashProtocol:: MAX_STAKE_PERIOD_EXCEEDS");
-
-        uint256 expiration = block.timestamp.add(_expiry);
-
         IFlashToken(FLASH_TOKEN).transferFrom(staker, address(this), _amountIn);
 
+        uint256 expiration = block.timestamp.add(_expiry);
         balances[staker] = balances[staker].add(_amountIn);
 
         id = keccak256(abi.encodePacked(_amountIn, _expiry, _receiver, staker, block.timestamp));
@@ -170,41 +211,32 @@ contract FlashProtocol is IFlashProtocol {
         emit Unstaked(_id, s.amountIn, staker);
     }
 
-    function getMatchedAmount(uint256 _mintedAmount) public override view returns (uint256) {
+    function getMatchedAmount(uint256 _mintedAmount) public view override returns (uint256) {
         return _mintedAmount.mul(matchRatio).div(10000);
     }
 
-    function getMintAmount(uint256 _amountIn, uint256 _expiry) public override view returns (uint256) {
+    function getMintAmount(uint256 _amountIn, uint256 _expiry) public view override returns (uint256) {
         return _amountIn.mul(_expiry).mul(getFPY(_amountIn)).div(PRECISION * SECONDS_IN_1_YEAR);
     }
 
-    function getFPY(uint256 _amountIn) public override view returns (uint256) {
+    function getFPY(uint256 _amountIn) public view override returns (uint256) {
         return (PRECISION.sub(getPercentageStaked(_amountIn))).div(2);
     }
 
-    function getPercentageStaked(uint256 _amountIn) public override view returns (uint256 percentage) {
+    function getPercentageStaked(uint256 _amountIn) public view override returns (uint256) {
         uint256 locked = IFlashToken(FLASH_TOKEN).balanceOf(address(this)).add(_amountIn);
-        percentage = locked.mul(PRECISION).div(IFlashToken(FLASH_TOKEN).totalSupply());
+        return locked.mul(PRECISION).div(IFlashToken(FLASH_TOKEN).totalSupply());
+    }
+
+    function calculateMaxStakePeriod(uint256 _amountIn) public view override returns (uint256) {
+        return MAX_FPY_FOR_1_YEAR.mul(SECONDS_IN_1_YEAR).div(getFPY(_amountIn));
     }
 
     function _calculateBurn(
         uint256 _amount,
         uint256 _remainingTime,
         uint256 _totalTime
-    ) private view returns (uint256 burnAmount) {
-        burnAmount = _amount.mul(_remainingTime).mul(getInvFPY(_amount)).div(_totalTime.mul(PRECISION));
-    }
-
-    function getInvFPY(uint256 _amount) public override view returns (uint256) {
-        return PRECISION.sub(getPercentageUnStaked(_amount));
-    }
-
-    function getPercentageUnStaked(uint256 _amount) public override view returns (uint256 percentage) {
-        uint256 locked = IFlashToken(FLASH_TOKEN).balanceOf(address(this)).sub(_amount);
-        percentage = locked.mul(PRECISION).div(IFlashToken(FLASH_TOKEN).totalSupply());
-    }
-
-    function calculateMaxStakePeriod(uint256 _amountIn) private view returns (uint256) {
-        return MAX_FPY_FOR_1_YEAR.mul(SECONDS_IN_1_YEAR).div(getFPY(_amountIn));
+    ) private pure returns (uint256) {
+        return _amount.mul(_remainingTime).div(_totalTime);
     }
 }

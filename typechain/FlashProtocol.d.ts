@@ -25,18 +25,18 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
     "FLASH_TOKEN()": FunctionFragment;
     "TIMELOCK()": FunctionFragment;
     "balances(address)": FunctionFragment;
+    "calculateMaxStakePeriod(uint256)": FunctionFragment;
     "getFPY(uint256)": FunctionFragment;
-    "getInvFPY(uint256)": FunctionFragment;
     "getMatchedAmount(uint256)": FunctionFragment;
     "getMintAmount(uint256,uint256)": FunctionFragment;
     "getPercentageStaked(uint256)": FunctionFragment;
-    "getPercentageUnStaked(uint256)": FunctionFragment;
     "lockFunction(uint8)": FunctionFragment;
     "matchRatio()": FunctionFragment;
     "matchReceiver()": FunctionFragment;
     "setMatchRatio(uint256)": FunctionFragment;
     "setMatchReceiver(address)": FunctionFragment;
     "stake(uint256,uint256,address,bytes)": FunctionFragment;
+    "stakeWithPermit(address,uint256,uint256,uint256,uint8,bytes32,bytes32,bytes)": FunctionFragment;
     "stakes(bytes32)": FunctionFragment;
     "timelock(uint8)": FunctionFragment;
     "unlockFunction(uint8)": FunctionFragment;
@@ -51,11 +51,11 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "TIMELOCK", values?: undefined): string;
   encodeFunctionData(functionFragment: "balances", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "getFPY",
+    functionFragment: "calculateMaxStakePeriod",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getInvFPY",
+    functionFragment: "getFPY",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -68,10 +68,6 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getPercentageStaked",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPercentageUnStaked",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -98,6 +94,19 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
     functionFragment: "stake",
     values: [BigNumberish, BigNumberish, string, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "stakeWithPermit",
+    values: [
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BytesLike,
+      BytesLike,
+      BytesLike
+    ]
+  ): string;
   encodeFunctionData(functionFragment: "stakes", values: [BytesLike]): string;
   encodeFunctionData(
     functionFragment: "timelock",
@@ -119,8 +128,11 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "TIMELOCK", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balances", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateMaxStakePeriod",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getFPY", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getInvFPY", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMatchedAmount",
     data: BytesLike
@@ -131,10 +143,6 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getPercentageStaked",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getPercentageUnStaked",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -155,6 +163,10 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "stakeWithPermit",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "stakes", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "timelock", data: BytesLike): Result;
   decodeFunctionResult(
@@ -228,6 +240,20 @@ export class FlashProtocol extends Contract {
       0: BigNumber;
     }>;
 
+    calculateMaxStakePeriod(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    "calculateMaxStakePeriod(uint256)"(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
     getFPY(
       _amountIn: BigNumberish,
       overrides?: CallOverrides
@@ -237,20 +263,6 @@ export class FlashProtocol extends Contract {
 
     "getFPY(uint256)"(
       _amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    getInvFPY(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "getInvFPY(uint256)"(
-      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
       0: BigNumber;
@@ -290,7 +302,6 @@ export class FlashProtocol extends Contract {
       _amountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      percentage: BigNumber;
       0: BigNumber;
     }>;
 
@@ -298,23 +309,6 @@ export class FlashProtocol extends Contract {
       _amountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      percentage: BigNumber;
-      0: BigNumber;
-    }>;
-
-    getPercentageUnStaked(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      percentage: BigNumber;
-      0: BigNumber;
-    }>;
-
-    "getPercentageUnStaked(uint256)"(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      percentage: BigNumber;
       0: BigNumber;
     }>;
 
@@ -384,6 +378,30 @@ export class FlashProtocol extends Contract {
       _amountIn: BigNumberish,
       _expiry: BigNumberish,
       _receiver: string,
+      _data: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    stakeWithPermit(
+      _receiver: string,
+      _amountIn: BigNumberish,
+      _expiry: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
+      _data: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "stakeWithPermit(address,uint256,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
+      _receiver: string,
+      _amountIn: BigNumberish,
+      _expiry: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
       _data: BytesLike,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -484,6 +502,16 @@ export class FlashProtocol extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  calculateMaxStakePeriod(
+    _amountIn: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "calculateMaxStakePeriod(uint256)"(
+    _amountIn: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getFPY(
     _amountIn: BigNumberish,
     overrides?: CallOverrides
@@ -491,16 +519,6 @@ export class FlashProtocol extends Contract {
 
   "getFPY(uint256)"(
     _amountIn: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getInvFPY(
-    _amount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getInvFPY(uint256)"(
-    _amount: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -533,16 +551,6 @@ export class FlashProtocol extends Contract {
 
   "getPercentageStaked(uint256)"(
     _amountIn: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getPercentageUnStaked(
-    _amount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getPercentageUnStaked(uint256)"(
-    _amount: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -596,6 +604,30 @@ export class FlashProtocol extends Contract {
     _amountIn: BigNumberish,
     _expiry: BigNumberish,
     _receiver: string,
+    _data: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  stakeWithPermit(
+    _receiver: string,
+    _amountIn: BigNumberish,
+    _expiry: BigNumberish,
+    _deadline: BigNumberish,
+    _v: BigNumberish,
+    _r: BytesLike,
+    _s: BytesLike,
+    _data: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "stakeWithPermit(address,uint256,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
+    _receiver: string,
+    _amountIn: BigNumberish,
+    _expiry: BigNumberish,
+    _deadline: BigNumberish,
+    _v: BigNumberish,
+    _r: BytesLike,
+    _s: BytesLike,
     _data: BytesLike,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -686,6 +718,16 @@ export class FlashProtocol extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    calculateMaxStakePeriod(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculateMaxStakePeriod(uint256)"(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getFPY(
       _amountIn: BigNumberish,
       overrides?: CallOverrides
@@ -693,16 +735,6 @@ export class FlashProtocol extends Contract {
 
     "getFPY(uint256)"(
       _amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getInvFPY(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getInvFPY(uint256)"(
-      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -735,16 +767,6 @@ export class FlashProtocol extends Contract {
 
     "getPercentageStaked(uint256)"(
       _amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPercentageUnStaked(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getPercentageUnStaked(uint256)"(
-      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -793,9 +815,6 @@ export class FlashProtocol extends Contract {
       _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<{
-      mintedAmount: BigNumber;
-      matchedAmount: BigNumber;
-      id: string;
       0: BigNumber;
       1: BigNumber;
       2: string;
@@ -808,9 +827,38 @@ export class FlashProtocol extends Contract {
       _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<{
-      mintedAmount: BigNumber;
-      matchedAmount: BigNumber;
-      id: string;
+      0: BigNumber;
+      1: BigNumber;
+      2: string;
+    }>;
+
+    stakeWithPermit(
+      _receiver: string,
+      _amountIn: BigNumberish,
+      _expiry: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
+      _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+      1: BigNumber;
+      2: string;
+    }>;
+
+    "stakeWithPermit(address,uint256,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
+      _receiver: string,
+      _amountIn: BigNumberish,
+      _expiry: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
+      _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<{
       0: BigNumber;
       1: BigNumber;
       2: string;
@@ -914,6 +962,16 @@ export class FlashProtocol extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    calculateMaxStakePeriod(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculateMaxStakePeriod(uint256)"(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getFPY(
       _amountIn: BigNumberish,
       overrides?: CallOverrides
@@ -921,16 +979,6 @@ export class FlashProtocol extends Contract {
 
     "getFPY(uint256)"(
       _amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getInvFPY(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getInvFPY(uint256)"(
-      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -963,16 +1011,6 @@ export class FlashProtocol extends Contract {
 
     "getPercentageStaked(uint256)"(
       _amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPercentageUnStaked(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getPercentageUnStaked(uint256)"(
-      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1026,6 +1064,30 @@ export class FlashProtocol extends Contract {
       _amountIn: BigNumberish,
       _expiry: BigNumberish,
       _receiver: string,
+      _data: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    stakeWithPermit(
+      _receiver: string,
+      _amountIn: BigNumberish,
+      _expiry: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
+      _data: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "stakeWithPermit(address,uint256,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
+      _receiver: string,
+      _amountIn: BigNumberish,
+      _expiry: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
       _data: BytesLike,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -1088,6 +1150,16 @@ export class FlashProtocol extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    calculateMaxStakePeriod(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "calculateMaxStakePeriod(uint256)"(
+      _amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getFPY(
       _amountIn: BigNumberish,
       overrides?: CallOverrides
@@ -1095,16 +1167,6 @@ export class FlashProtocol extends Contract {
 
     "getFPY(uint256)"(
       _amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getInvFPY(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getInvFPY(uint256)"(
-      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1137,16 +1199,6 @@ export class FlashProtocol extends Contract {
 
     "getPercentageStaked(uint256)"(
       _amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getPercentageUnStaked(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getPercentageUnStaked(uint256)"(
-      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1200,6 +1252,30 @@ export class FlashProtocol extends Contract {
       _amountIn: BigNumberish,
       _expiry: BigNumberish,
       _receiver: string,
+      _data: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    stakeWithPermit(
+      _receiver: string,
+      _amountIn: BigNumberish,
+      _expiry: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
+      _data: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "stakeWithPermit(address,uint256,uint256,uint256,uint8,bytes32,bytes32,bytes)"(
+      _receiver: string,
+      _amountIn: BigNumberish,
+      _expiry: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
       _data: BytesLike,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
