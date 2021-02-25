@@ -99,6 +99,8 @@ contract FlashProtocol is IFlashProtocol {
 
     function _setMatchRatio(uint256 _newMatchRatio) internal {
         require(_newMatchRatio >= 0 && _newMatchRatio <= 2000, "FlashProtocol:: INVALID_MATCH_RATIO");
+        // can be 0 and cannot be above 20%
+        require(_newMatchRatio <= 2000, "FlashProtocol:: INVALID_MATCH_RATIO");
         matchRatio = _newMatchRatio;
     }
 
