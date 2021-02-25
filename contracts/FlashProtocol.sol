@@ -208,7 +208,7 @@ contract FlashProtocol is IFlashProtocol {
         delete stakes[_id];
         IFlashToken(FLASH_TOKEN).burn(burnAmount);
         IFlashToken(FLASH_TOKEN).transfer(staker, withdrawAmount);
-        emit Unstaked(_id, s.amountIn, staker);
+        emit Unstaked(_id, withdrawAmount, staker);
     }
 
     function getMatchedAmount(uint256 _mintedAmount) public view override returns (uint256) {
