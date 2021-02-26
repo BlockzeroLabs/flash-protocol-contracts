@@ -201,6 +201,7 @@ contract FlashProtocol is IFlashProtocol {
         address staker = msg.sender;
         require(s.staker == staker, "FlashProtocol:: INVALID_STAKER");
         uint256 remainingTime = (s.expireAfter.sub(block.timestamp));
+        require(s.expiry > remainingTime, "Flash Protocol:: INVALID_UNSTAKE_TIME");
         uint256 burnAmount = _calculateBurn(s.amountIn, remainingTime, s.expiry);
         assert(burnAmount <= s.amountIn);
         balances[staker] = balances[staker].sub(s.amountIn);
