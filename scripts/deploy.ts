@@ -5,23 +5,43 @@
 import { ethers } from "hardhat";
 import { Contract, ContractFactory } from "ethers";
 
-async function main(): Promise<void> {
-  // Hardhat always runs the compile task when running scripts through it.
-  // If this runs in a standalone fashion you may want to call compile manually
-  // to make sure everything is compiled
-  // await run("compile");
+import FlashProtocol from "../artifacts/contracts/FlashProtocol.sol/FlashProtocol.json"
 
-  // We get the contract to deploy
-  const FlashProtocolFactory: ContractFactory = await ethers.getContractFactory("FlashProtocol");
-  const flashProtocol: Contract = await FlashProtocolFactory.deploy();
-  await flashProtocol.deployed();
 
-  console.log("Greeter deployed to: ", flashProtocol.address);
+async function predictAddress() {
+  const [liquidityProvider] = await ethers.getSigners()
+  let nonce = await liquidityProvider.getTransactionCount();
+  // let address = await ethers.utils.getContractAddress({from: liquidityProvider.address, nonce})
+  let address = await ethers.utils.getContractAddress({from: "0x28931Ba0e10f66064384109FA2a19d4049CC4105", nonce:"0"})
+  console.log(address)
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main()
+async function getAddres(): Promise<any> {
+  const [liquidityProvider] = await ethers.getSigners()
+  console.log(liquidityProvider.address)
+  return liquidityProvider
+}
+
+async function deployContract() {
+  let account = await getAddres()
+
+  let INITIAL_MINTER = "0xe7Ef8E1402055EB4E89a57d1109EfF3bAA334F5F"
+  let INTIIAL_MATCH_RATIO = "2000"
+  
+  const factory = new ContractFactory(FlashProtocol.abi, FlashProtocol.bytecode, account);
+  let tx = await factory
+    .deploy(
+      INITIAL_MINTER, INTIIAL_MATCH_RATIO,
+      {
+        gasLimit: 3000000,
+      }
+
+    )
+  let result = await tx.deployTransaction.wait(1)
+  console.log(result)
+}
+
+predictAddress()
   .then(() => process.exit(0))
   .catch((error: Error) => {
     console.error(error);
