@@ -24,7 +24,6 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
   functions: {
     "FLASH_TOKEN()": FunctionFragment;
     "TIMELOCK()": FunctionFragment;
-    "TOKEN()": FunctionFragment;
     "balances(address)": FunctionFragment;
     "calculateMaxStakePeriod(uint256)": FunctionFragment;
     "getFPY(uint256)": FunctionFragment;
@@ -50,7 +49,6 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "TIMELOCK", values?: undefined): string;
-  encodeFunctionData(functionFragment: "TOKEN", values?: undefined): string;
   encodeFunctionData(functionFragment: "balances", values: [string]): string;
   encodeFunctionData(
     functionFragment: "calculateMaxStakePeriod",
@@ -129,7 +127,6 @@ interface FlashProtocolInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "TIMELOCK", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "TOKEN", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balances", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "calculateMaxStakePeriod",
@@ -227,18 +224,6 @@ export class FlashProtocol extends Contract {
       overrides?: CallOverrides
     ): Promise<{
       0: BigNumber;
-    }>;
-
-    TOKEN(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
-
-    "TOKEN()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
     }>;
 
     balances(
@@ -510,10 +495,6 @@ export class FlashProtocol extends Contract {
 
   "TIMELOCK()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  TOKEN(overrides?: CallOverrides): Promise<string>;
-
-  "TOKEN()"(overrides?: CallOverrides): Promise<string>;
-
   balances(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   "balances(address)"(
@@ -729,10 +710,6 @@ export class FlashProtocol extends Contract {
     TIMELOCK(overrides?: CallOverrides): Promise<BigNumber>;
 
     "TIMELOCK()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    TOKEN(overrides?: CallOverrides): Promise<string>;
-
-    "TOKEN()"(overrides?: CallOverrides): Promise<string>;
 
     balances(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -978,10 +955,6 @@ export class FlashProtocol extends Contract {
 
     "TIMELOCK()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    TOKEN(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "TOKEN()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     balances(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "balances(address)"(
@@ -1166,10 +1139,6 @@ export class FlashProtocol extends Contract {
     TIMELOCK(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "TIMELOCK()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    TOKEN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "TOKEN()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     balances(
       arg0: string,

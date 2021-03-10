@@ -13,7 +13,7 @@ import "./interfaces/IERC20.sol";
 //   - ERC-3009 (`transferWithAuthorization()`)
 //   - flashMint() - allows to flashMint an arbitrary amount of FLASH, with the
 //     condition that it is burned before the end of the transaction.
-contract FlashToken is IERC20 {
+contract FlashTokenTest is IERC20 {
     using SafeMath for uint256;
 
     // bytes32 private constant EIP712DOMAIN_HASH =

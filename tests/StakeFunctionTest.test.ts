@@ -1,97 +1,89 @@
-import { expect, use } from "chai";
-import { deployContract, MockProvider, solidity, createFixtureLoader, loadFixture } from "ethereum-waffle";
-import FlashProtocolArtifact from "../artifacts/contracts/tests/FlashProtocolTest.sol/FlashProtocol.json";
-import FlashTokenArtifact from "../artifacts/contracts/tests/flash-token/FlashToken.sol/FlashToken.json"
-import { constants, ethers, utils } from "ethers";
-import csvtojson from "csvtojson"
+import hre from "hardhat";
+import { ethers, BigNumber, utils } from "ethers";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
+import { FlashProtocolTest } from "../typechain/FlashProtocolTest";
+import { FlashTokenTest } from "../typechain/FlashTokenTest";
+import stakes from "../data.json"
 
-
-use(solidity);
-
-describe("Flash protocol", async () => {
-
+describe("Unit tests", function () {
+    let flashToken: FlashTokenTest;
+    let flashProtocol: FlashProtocolTest;
+    let wallet: SignerWithAddress;
+    let walletTo: SignerWithAddress;
     let counter = 0;
 
-    let dataStake: any;
-    const provider = new MockProvider({
-        ganacheOptions: {
-            "hardfork": 'istanbul',
-            "mnemonic": 'horn horn horn horn horn horn horn horn horn horn horn horn',
-            "gasLimit": 9999999
+
+    before(async function () {
+        const wallets: SignerWithAddress[] = await hre.ethers.getSigners();
+        wallet = wallets[0];
+        walletTo = wallets[1];
+    });
+
+
+    describe("FlashProtocolTest", function () {
+        async function deploy() {
+            const flashTokenAddress = await predictAddress(wallet);
+            const FlashProtocol = (await hre.ethers.getContractFactory("FlashProtocolTest", wallet)).connect(walletTo);
+            const FlashToken = await hre.ethers.getContractFactory("FlashTokenTest", wallet);
+            flashProtocol = <FlashProtocolTest>await FlashProtocol.deploy(walletTo.address, "0", flashTokenAddress);
+            flashToken = <FlashTokenTest>await FlashToken.deploy(wallet.address, flashProtocol.address);
+            await flashToken.mint(wallet.address, ethers.utils.parseUnits(stakes[0].totalSupply.toString(), "ether"));
+            await flashToken.approve(flashProtocol.address, ethers.constants.MaxUint256);
         }
-    })
-    const [wallet, walletTo] = provider.getWallets()
 
-    let FlashToken: ethers.Contract
+        async function stake(amount: BigNumber, duration: string): Promise<any> {
+            const protocol = flashProtocol.connect(wallet);
+            let tx = await protocol.stake(amount, duration, wallet.address, "0x");
+            return tx
+        }
 
-    let FlashProtocol: ethers.Contract;
+        async function unstakeEarly(id: string): Promise<any> {
+            const protocol = flashProtocol.connect(wallet);
+            let tx = await protocol.unstakeEarly(id);
+            return tx
+        }
 
-    let id: String;
+        async function predictAddress(wallet: SignerWithAddress): Promise<string> {
+            const nonce = await wallet.getTransactionCount();
+            return ethers.utils.getContractAddress({ from: wallet.address, nonce });
+        }
 
-    beforeEach(async () => {
-        dataStake = await getJSON();
-        let flashtokenAddress = await predictAddress(wallet)
-        console.log(flashtokenAddress)
-        FlashProtocol = await deployContract(walletTo, FlashProtocolArtifact, [walletTo.address, "0", flashtokenAddress]);
-        FlashToken = await deployContract(wallet, FlashTokenArtifact, [wallet.address, FlashProtocol.address])
-        console.log(FlashToken.address)
-        await FlashToken.mint(wallet.address, (ethers.utils.parseUnits(dataStake[counter].totalSupply, 'ether')))
-        await FlashToken.approve(FlashProtocol.address, constants.MaxUint256);
-    })
+        async function generateId(amount: string, duration: string, tx: any): Promise<string> {
+            let receipt = await hre.ethers.provider.getTransaction(tx.hash)
+            let block = await hre.ethers.provider.getBlock(String(receipt.blockHash))
 
-    it('stake', async () => {
-        let totalStakeAmount = Number(dataStake[counter].totalStakedTokens) +Number(dataStake[counter].stakedAmount)
-        await stake((ethers.utils.parseUnits(totalStakeAmount.toString(),'ether')).toString(),dataStake[counter].duration)
-        counter++
-    })
+            let id = await utils.solidityKeccak256(["uint256", "uint256", "address", "address", "uint256"],
+                [
+                    amount,
+                    duration,
+                    wallet.address,
+                    wallet.address,
+                    block.timestamp
+                ]
+            )
 
-    async function stake(amount: string, duration: string) {
+            return id
 
-        // console.log(amount, (await FlashToken.totalSupply()).toString(), (await FlashToken.balanceOf(wallet.address)).toString())
+        }
+        it("stake (half data)", async () => {
+            for (let i = 0; i < stakes.length / 2; i++) {
+                await testing(stakes[i]);
+            }
+        });
 
-        let bytes32Param = await ethers.utils.formatBytes32String("0x");
+        it("stake (second half data)", async () => {
+            for (let i = stakes.length / 2; i < stakes.length; i++) {
+                await testing(stakes[i]);
+            }
+        });
 
-        let protocol = await FlashProtocol.connect(wallet);
+        async function testing(data: any) {
+            await deploy()
+            const totalStakeAmount = BigNumber.from(data.totalStakedTokens).add(data.stakedAmount);
+            let tx = await stake((ethers.utils.parseUnits(totalStakeAmount.toString(), 'ether')), data.duration.toString())
+            let id = await generateId((ethers.utils.parseUnits(totalStakeAmount.toString(), 'ether')).toString(), data.duration.toString(), tx)
+            await unstakeEarly(id);
+        }
 
-        let tx = await protocol.stake(amount, duration, wallet.address, bytes32Param)
-
-        let receipt = await provider.getTransaction(tx.hash)
-
-        let block = await provider.getBlock(String(receipt.blockHash))
-
-        console.log(block.timestamp)
-
-        let balance = await protocol.balances(wallet.address);
-        // console.log(balance.toString())
-        // console.log((await FlashToken.balanceOf(wallet.address)).toString())
-        id = await utils.solidityKeccak256(["uint256", "uint256", "address", "address", "uint256"],
-            [
-                amount,
-                duration,
-                walletTo.address,
-                wallet.address,
-                block.timestamp
-            ]
-        )
-        let stake = await protocol.stakes(id)
-        // console.log(stake)
-
-        expect(balance.toString()).not.equal("0")
-
-            
-
-    }
+    });
 });
-
-async function getJSON(): Promise<any> {
-    const csvFilePath = 'data.csv'
-    const jsonArray = await csvtojson().fromFile(csvFilePath)
-    return jsonArray
-}
-
-async function predictAddress(wallet:ethers.Wallet) : Promise<string>{
-    let nonce = await wallet.getTransactionCount();
-    let address = await ethers.utils.getContractAddress({from: wallet.address, nonce})
-    return address
-  }
-  

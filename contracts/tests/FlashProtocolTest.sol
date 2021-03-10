@@ -10,7 +10,8 @@ import "../libraries/Address.sol";
 
 import "hardhat/console.sol";
 
-contract FlashProtocol is IFlashProtocol {
+
+contract FlashProtocolTest is IFlashProtocol {
     using SafeMath for uint256;
     using Address for address;
 
@@ -122,6 +123,10 @@ contract FlashProtocol is IFlashProtocol {
             bytes32
         )
     {
+        console.log("amountIn %s ", _amountIn);
+        console.log("_expiry %s ", _expiry);
+        console.log("_receiver %s ", _receiver);
+
         return _stake(_amountIn, _expiry, _receiver, _data);
     }
 
@@ -166,16 +171,23 @@ contract FlashProtocol is IFlashProtocol {
 
         address staker = msg.sender;
 
-        IFlashToken(TOKEN).transferFrom(staker, address(this), _amountIn);
-
         uint256 expiration = block.timestamp.add(_expiry);
         balances[staker] = balances[staker].add(_amountIn);
 
         id = keccak256(abi.encodePacked(_amountIn, _expiry, _receiver, staker, block.timestamp));
 
+        console.logBytes32(id);
+
+        console.log(block.timestamp);
+
+        console.log(staker);
+
         require(stakes[id].staker == address(0), "FlashProtocol:: STAKE_EXISTS");
 
         mintedAmount = getMintAmount(_amountIn, _expiry);
+
+        console.log("minted amount %s: ", mintedAmount);
+
         matchedAmount = getMatchedAmount(mintedAmount);
 
         IFlashToken(TOKEN).mint(_receiver, mintedAmount);
@@ -186,6 +198,8 @@ contract FlashProtocol is IFlashProtocol {
         if (_receiver.isContract()) {
             IFlashReceiver(_receiver).receiveFlash(id, _amountIn, expiration, mintedAmount, staker, _data);
         }
+
+        IFlashToken(TOKEN).transferFrom(staker, address(this), _amountIn);
 
         emit Staked(id, _amountIn, _expiry, expiration, mintedAmount, staker, _receiver);
     }
@@ -207,6 +221,8 @@ contract FlashProtocol is IFlashProtocol {
         uint256 remainingTime = (s.expireAfter.sub(block.timestamp));
         require(s.expiry > remainingTime, "Flash Protocol:: INVALID_UNSTAKE_TIME");
         uint256 burnAmount = _calculateBurn(s.amountIn, remainingTime, s.expiry);
+        console.log("Stake amount: %s", s.amountIn);
+        console.log("Burn amount: %s", burnAmount);
         assert(burnAmount <= s.amountIn);
         balances[staker] = balances[staker].sub(s.amountIn);
         withdrawAmount = s.amountIn.sub(burnAmount);
@@ -225,16 +241,22 @@ contract FlashProtocol is IFlashProtocol {
     }
 
     function getFPY(uint256 _amountIn) public view override returns (uint256) {
-        return (PRECISION.sub(getPercentageStaked(_amountIn))).div(2);
+        uint256 result =  (PRECISION.sub(getPercentageStaked(_amountIn))).div(2);
+        console.log("FPY: %s", result);
+        return result;
     }
 
     function getPercentageStaked(uint256 _amountIn) public view override returns (uint256) {
         uint256 locked = IFlashToken(TOKEN).balanceOf(address(this)).add(_amountIn);
-        return locked.mul(PRECISION).div(IFlashToken(TOKEN).totalSupply());
+        uint256 ratio = locked.mul(PRECISION).div(IFlashToken(TOKEN).totalSupply());
+        console.log("Ratio: %s", ratio);
+        return ratio;
     }
 
     function calculateMaxStakePeriod(uint256 _amountIn) public view override returns (uint256) {
-        return MAX_FPY_FOR_1_YEAR.mul(SECONDS_IN_1_YEAR).div(getFPY(_amountIn));
+        uint256 maxStakePeriod = MAX_FPY_FOR_1_YEAR.mul(SECONDS_IN_1_YEAR).div(getFPY(_amountIn)); 
+        console.log("Max stake period: %s", maxStakePeriod);
+        return maxStakePeriod; 
     }
 
     function _calculateBurn(

@@ -1,7 +1,7 @@
 // import { expect, use } from "chai";
 // import { deployContract, MockProvider, solidity, createFixtureLoader, loadFixture } from "ethereum-waffle";
 // import FlashProtocolArtifact from "../artifacts/contracts/FlashProtocol.sol/FlashProtocol.json";
-// import FlashTokenArtifact from "../artifacts/contracts/tests/flash-token/FlashToken.sol/FlashToken.json"
+// import FlashTokenArtifact from "../artifacts/contracts/tests/flash-token/FlashTokenTest.sol/FlashTokenTest.json"
 // import { constants, ethers, utils } from "ethers";
 // import { ecsign } from "ethereumjs-util";
 // import {

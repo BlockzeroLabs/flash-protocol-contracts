@@ -1,0 +1,218 @@
+[
+  {
+    "stakedAmount": 1,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 998000
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 800000
+  },
+  {
+    "stakedAmount": 10000,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 800000
+  },
+  {
+    "stakedAmount": 100000,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 800000
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 500000
+  },
+  {
+    "stakedAmount": 10000,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 500000
+  },
+  {
+    "stakedAmount": 100000,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 500000
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 200000
+  },
+  {
+    "stakedAmount": 10000,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 200000
+  },
+  {
+    "stakedAmount": 100000,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 200000
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 0
+  },
+  {
+    "stakedAmount": 10000,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 0
+  },
+  {
+    "stakedAmount": 100000,
+    "duration": 60,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 0
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 999800
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 800000
+  },
+  {
+    "stakedAmount": 10000,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 800000
+  },
+  {
+    "stakedAmount": 100000,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 800000
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 500000
+  },
+  {
+    "stakedAmount": 10000,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 500000
+  },
+  {
+    "stakedAmount": 100000,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 500000
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 200000
+  },
+  {
+    "stakedAmount": 10000,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 200000
+  },
+  {
+    "stakedAmount": 100000,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 200000
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 0
+  },
+  {
+    "stakedAmount": 10000,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 0
+  },
+  {
+    "stakedAmount": 100000,
+    "duration": 31536000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 0
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 1576800000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 999800
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 157680000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 800000
+  },
+  {
+    "stakedAmount": 10000,
+    "duration": 157680000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 800000
+  },
+  {
+    "stakedAmount": 100000,
+    "duration": 157680000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 800000
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 63072000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 500000
+  },
+  {
+    "stakedAmount": 10000,
+    "duration": 63072000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 500000
+  },
+  {
+    "stakedAmount": 100000,
+    "duration": 63072000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 500000
+  },
+  {
+    "stakedAmount": 1,
+    "duration": 39420000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 200000
+  },
+  {
+    "stakedAmount": 10000,
+    "duration": 39420000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 200000
+  },
+  {
+    "stakedAmount": 100000,
+    "duration": 39420000,
+    "totalSupply": 1000000,
+    "totalStakedTokens": 200000
+  }
+]
