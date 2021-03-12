@@ -13,11 +13,11 @@ import { constants, ethers, utils } from "ethers";
 import { ecsign } from "ethereumjs-util";
 
 import {
-  defaultAbiCoder,
-  hexlify,
-  keccak256,
-  toUtf8Bytes,
-  solidityPack
+    defaultAbiCoder,
+    hexlify,
+    keccak256,
+    toUtf8Bytes,
+    solidityPack
 } from "ethers/lib/utils";
 
 use(solidity)
@@ -53,23 +53,24 @@ describe("Unit tests", function () {
         }
 
         async function stake(amount: BigNumber, duration: string, mintedAmount: string, fpyAfterStake: string): Promise<any> {
-            let maxStakePeriod = (await flashProtocol.calculateMaxStakePeriod(amount.toString())).toString()
-            console.log(maxStakePeriod, duration)
-            if (Number(duration) > Number(maxStakePeriod)) {
-                expect(false).to.be.equal(false)
+            try {
+                let maxStakePeriod = (await flashProtocol.calculateMaxStakePeriod(amount.toString())).toString()
+                console.log(maxStakePeriod, duration)
+                expect(Number(duration) <= Number(maxStakePeriod))
+                const protocol = flashProtocol.connect(wallet);
+                let fpyBeforeStakeContract = (await flashProtocol.getFPY("0")).toString()
+                console.log(fpyBeforeStakeContract)
+                expect(fpyBeforeStakeContract).to.be.equal("500000000000000000");
+                let tx = await protocol.stake(amount.toString(), duration, wallet.address, "0x");
+                let fpyAfterStakeContract = (await flashProtocol.getFPY("0")).toString();
+                expect(fpyAfterStakeContract).to.be.equal(fpyAfterStake);
+                let totalSupplyContract = (await flashToken.totalSupply()).toString()
+                let mintedAmountContract = (new BigNumber(totalSupplyContract).minus(new BigNumber(totalSupply))).toFixed(0).toString();
+                expect(mintedAmountContract.toString()).to.be.equal(mintedAmount)
+                return tx
+            } catch (e) {
                 return false
             }
-            const protocol = flashProtocol.connect(wallet);
-            let fpyBeforeStakeContract = (await flashProtocol.getFPY("0")).toString()
-            console.log(fpyBeforeStakeContract)
-            expect(fpyBeforeStakeContract).to.be.equal("500000000000000000");
-            let tx = await protocol.stake(amount.toString(), duration, wallet.address, "0x");
-            let fpyAfterStakeContract = (await flashProtocol.getFPY("0")).toString();
-            expect(fpyAfterStakeContract).to.be.equal(fpyAfterStake);
-            let totalSupplyContract = (await flashToken.totalSupply()).toString()
-            let mintedAmountContract = (new BigNumber(totalSupplyContract).minus(new BigNumber(totalSupply))).toFixed(0).toString();
-            expect(mintedAmountContract.toString()).to.be.equal(mintedAmount)
-            return tx
         }
 
         async function unstakeEarly(id: string, unstakeAmount: string, stakeAmount: string): Promise<any> {
