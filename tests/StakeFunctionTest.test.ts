@@ -68,7 +68,8 @@ describe("Unit tests", function () {
                 let mintedAmountContract = (new BigNumber(totalSupplyContract).minus(new BigNumber(totalSupply))).toFixed(0).toString();
                 expect(mintedAmountContract.toString()).to.be.equal(mintedAmount)
                 return tx
-            } catch (e) {
+            }
+            catch (e) {
                 return false
             }
         }
