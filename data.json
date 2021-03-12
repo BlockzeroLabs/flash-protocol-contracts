@@ -1,218 +1,182 @@
 [
   {
-    "stakedAmount": 1,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 998000
+    "stakeAmount": "998001000000000000000000",
+    "mintedAmount": "1897834854452054",
+    "expiry": "60",
+    "unstakeTime": "60",
+    "fpyAfterStake": "999500947020539",
+    "unstakeAmount": "998001000000000000000000",
+    "fpyAfterUnstake": "495000000009489174"
   },
   {
-    "stakedAmount": 1,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 800000
+    "stakeAmount": "800001000000000000000000",
+    "mintedAmount": "152206430744863013",
+    "expiry": "60",
+    "unstakeTime": "40",
+    "fpyAfterStake": "99999560882639134",
+    "unstakeAmount": "786667650000000000000000",
+    "fpyAfterUnstake": "493181815082643219"
   },
   {
-    "stakedAmount": 10000,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 800000
+    "stakeAmount": "810000000000000000000000",
+    "mintedAmount": "244006849315068493",
+    "expiry": "100",
+    "unstakeTime": "100",
+    "fpyAfterStake": "95000098822749859",
+    "unstakeAmount": "810000000000000000000000",
+    "fpyAfterUnstake": "495000001220033949"
   },
   {
-    "stakedAmount": 100000,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 800000
+    "stakeAmount": "900000000000000000000000",
+    "mintedAmount": "256849315068493150",
+    "expiry": "180",
+    "unstakeTime": "50",
+    "fpyAfterStake": "50000115582162094",
+    "unstakeAmount": "895000000000000000000000",
+    "fpyAfterUnstake": "485714285714285714"
   },
   {
-    "stakedAmount": 1,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 500000
+    "stakeAmount": "500001000000000000000000",
+    "mintedAmount": "1783675799079623287",
+    "expiry": "450",
+    "unstakeTime": "450",
+    "fpyAfterStake": "249999945919046233",
+    "unstakeAmount": "500001000000000000000000",
+    "fpyAfterUnstake": "495000008918363088"
   },
   {
-    "stakedAmount": 10000,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 500000
+    "stakeAmount": "510000000000000000000000",
+    "mintedAmount": "1030156012176560121",
+    "expiry": "260",
+    "unstakeTime": "260",
+    "fpyAfterStake": "245000262689512494",
+    "unstakeAmount": "510000000000000000000000",
+    "fpyAfterUnstake": "495000005150774755"
   },
   {
-    "stakedAmount": 100000,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 500000
+    "stakeAmount": "600000000000000000000000",
+    "mintedAmount": "456621004566210045",
+    "expiry": "120",
+    "unstakeTime": "60",
+    "fpyAfterStake": "200000136986238819",
+    "unstakeAmount": "595000000000000000000000",
+    "fpyAfterUnstake": "492857142857142857"
   },
   {
-    "stakedAmount": 1,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 200000
+    "stakeAmount": "200001000000000000000000",
+    "mintedAmount": "431254788175894216",
+    "expiry": "170",
+    "unstakeTime": "170",
+    "fpyAfterStake": "399999543125675847",
+    "unstakeAmount": "200001000000000000000000",
+    "fpyAfterUnstake": "495000002156273011"
   },
   {
-    "stakedAmount": 10000,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 200000
+    "stakeAmount": "210000000000000000000000",
+    "mintedAmount": "82950000000000000000000",
+    "expiry": "31536000",
+    "unstakeTime": "21536000",
+    "fpyAfterStake": "403042615079181864",
+    "unstakeAmount": "209999993340943683409436",
+    "fpyAfterUnstake": "494643293925805136"
   },
   {
-    "stakedAmount": 100000,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 200000
+    "stakeAmount": "300000000000000000000000",
+    "mintedAmount": "5250000000000000000000000",
+    "expiry": "1576800000",
+    "unstakeTime": "1458910000",
+    "fpyAfterStake": "476000000000000000",
+    "unstakeAmount": "22429604261796042617960",
+    "fpyAfterUnstake": "494885278828207259"
   },
   {
-    "stakedAmount": 1,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 0
+    "stakeAmount": "1000000000000000000",
+    "mintedAmount": "24048682191780821917",
+    "expiry": "1516800000",
+    "unstakeTime": "1516800000",
+    "fpyAfterStake": "499999500012024051",
+    "unstakeAmount": "1000000000000000000",
+    "fpyAfterUnstake": "495001053887406477"
   },
   {
-    "stakedAmount": 10000,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 0
+    "stakeAmount": "100000000000000000000000",
+    "mintedAmount": "1679223744292237442922374",
+    "expiry": "1176800000",
+    "unstakeTime": "60",
+    "fpyAfterStake": "481337878142309331",
+    "unstakeAmount": "99999994901427600271923",
+    "fpyAfterUnstake": "494444444475917113"
   },
   {
-    "stakedAmount": 100000,
-    "duration": 60,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 0
+    "stakeAmount": "999801000000000000000000",
+    "mintedAmount": "4974009975000000000",
+    "expiry": "1576800",
+    "unstakeTime": "30",
+    "fpyAfterStake": "101986497705643",
+    "unstakeAmount": "999800365930365296803652",
+    "fpyAfterUnstake": "-22433456063974917710"
   },
   {
-    "stakedAmount": 1,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 999800
+    "stakeAmount": "800001000000000000000000",
+    "mintedAmount": "159999399999000000000000",
+    "expiry": "63072000",
+    "unstakeTime": "60",
+    "fpyAfterStake": "155171804398911906",
+    "unstakeAmount": "800000987316067351598173",
+    "fpyAfterUnstake": "474999970129459173"
   },
   {
-    "stakedAmount": 1,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 800000
+    "stakeAmount": "810000000000000000000000",
+    "mintedAmount": "210821917808219178082",
+    "expiry": "86400",
+    "unstakeTime": "86400",
+    "fpyAfterStake": "95085364879924630",
+    "unstakeAmount": "810000000000000000000000",
+    "fpyAfterUnstake": "495001053887406477"
   },
   {
-    "stakedAmount": 10000,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 800000
+    "stakeAmount": "900000000000000000000000",
+    "mintedAmount": "1233047945205479452054",
+    "expiry": "864120",
+    "unstakeTime": "864120",
+    "fpyAfterStake": "50554188234678438",
+    "unstakeAmount": "900000000000000000000000",
+    "fpyAfterUnstake": "495006157647051983"
   },
   {
-    "stakedAmount": 100000,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 800000
+    "stakeAmount": "500001000000000000000000",
+    "mintedAmount": "156249999999375000000000",
+    "expiry": "39420000",
+    "unstakeTime": "39420000",
+    "fpyAfterStake": "283783351351234477",
+    "unstakeAmount": "500001000000000000000000",
+    "fpyAfterUnstake": "495675675675673338"
   },
   {
-    "stakedAmount": 1,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 500000
+    "stakeAmount": "600000000000000000000000",
+    "mintedAmount": "152207001522070015",
+    "expiry": "40",
+    "unstakeTime": "40",
+    "fpyAfterStake": "200000045662093507",
+    "unstakeAmount": "600000000000000000000000",
+    "fpyAfterUnstake": "495000000761034892"
   },
   {
-    "stakedAmount": 10000,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 500000
+    "stakeAmount": "200001000000000000000000",
+    "mintedAmount": "3238977138488127853881278",
+    "expiry": "1276800000",
+    "unstakeTime": "360",
+    "fpyAfterStake": "476409285369331776",
+    "unstakeAmount": "200000943608740601503759",
+    "fpyAfterUnstake": "493749992628048018"
   },
   {
-    "stakedAmount": 100000,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 500000
-  },
-  {
-    "stakedAmount": 1,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 200000
-  },
-  {
-    "stakedAmount": 10000,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 200000
-  },
-  {
-    "stakedAmount": 100000,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 200000
-  },
-  {
-    "stakedAmount": 1,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 0
-  },
-  {
-    "stakedAmount": 10000,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 0
-  },
-  {
-    "stakedAmount": 100000,
-    "duration": 31536000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 0
-  },
-  {
-    "stakedAmount": 1,
-    "duration": 1576800000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 999800
-  },
-  {
-    "stakedAmount": 1,
-    "duration": 157680000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 800000
-  },
-  {
-    "stakedAmount": 10000,
-    "duration": 157680000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 800000
-  },
-  {
-    "stakedAmount": 100000,
-    "duration": 157680000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 800000
-  },
-  {
-    "stakedAmount": 1,
-    "duration": 63072000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 500000
-  },
-  {
-    "stakedAmount": 10000,
-    "duration": 63072000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 500000
-  },
-  {
-    "stakedAmount": 100000,
-    "duration": 63072000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 500000
-  },
-  {
-    "stakedAmount": 1,
-    "duration": 39420000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 200000
-  },
-  {
-    "stakedAmount": 10000,
-    "duration": 39420000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 200000
-  },
-  {
-    "stakedAmount": 100000,
-    "duration": 39420000,
-    "totalSupply": 1000000,
-    "totalStakedTokens": 200000
+    "stakeAmount": "210000000000000000000000",
+    "mintedAmount": "681780821917808219178",
+    "expiry": "259200",
+    "unstakeTime": "259200",
+    "fpyAfterStake": "395071538212919767",
+    "unstakeAmount": "210000000000000000000000",
+    "fpyAfterUnstake": "495003406581567608"
   }
 ]

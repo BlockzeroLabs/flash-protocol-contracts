@@ -178,8 +178,6 @@ contract FlashProtocolTest is IFlashProtocol {
 
         console.logBytes32(id);
 
-        console.log(block.timestamp);
-
         console.log(staker);
 
         require(stakes[id].staker == address(0), "FlashProtocol:: STAKE_EXISTS");
@@ -249,13 +247,11 @@ contract FlashProtocolTest is IFlashProtocol {
     function getPercentageStaked(uint256 _amountIn) public view override returns (uint256) {
         uint256 locked = IFlashToken(TOKEN).balanceOf(address(this)).add(_amountIn);
         uint256 ratio = locked.mul(PRECISION).div(IFlashToken(TOKEN).totalSupply());
-        console.log("Ratio: %s", ratio);
         return ratio;
     }
 
     function calculateMaxStakePeriod(uint256 _amountIn) public view override returns (uint256) {
         uint256 maxStakePeriod = MAX_FPY_FOR_1_YEAR.mul(SECONDS_IN_1_YEAR).div(getFPY(_amountIn)); 
-        console.log("Max stake period: %s", maxStakePeriod);
         return maxStakePeriod; 
     }
 

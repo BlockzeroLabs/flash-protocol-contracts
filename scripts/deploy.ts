@@ -11,8 +11,8 @@ import FlashProtocol from "../artifacts/contracts/FlashProtocol.sol/FlashProtoco
 async function predictAddress() {
   const [liquidityProvider] = await ethers.getSigners()
   let nonce = await liquidityProvider.getTransactionCount();
-  // let address = await ethers.utils.getContractAddress({from: liquidityProvider.address, nonce})
-  let address = await ethers.utils.getContractAddress({from: "0x28931Ba0e10f66064384109FA2a19d4049CC4105", nonce:"0"})
+  let address = await ethers.utils.getContractAddress({from: liquidityProvider.address, nonce})
+  // let address = await ethers.utils.getContractAddress({from: "0x28931Ba0e10f66064384109FA2a19d4049CC4105", nonce:"0"})
   console.log(address)
 }
 
@@ -41,7 +41,7 @@ async function deployContract() {
   console.log(result)
 }
 
-predictAddress()
+deployContract()
   .then(() => process.exit(0))
   .catch((error: Error) => {
     console.error(error);
