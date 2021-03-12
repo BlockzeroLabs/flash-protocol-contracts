@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.6.12;
+pragma solidity 0.7.4;
 
 interface IFlashMint {
-    function flashMint(uint256 value,bytes calldata data) external;
+    function flashMint(uint256 value, bytes calldata data) external;
 }

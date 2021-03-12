@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.6.12;
+pragma solidity 0.7.4;
 
 import "./interfaces/IFlashToken.sol";
 import "./interfaces/IFlashReceiver.sol";
@@ -22,7 +22,7 @@ contract FlashProtocol is IFlashProtocol {
     }
 
     uint256 public constant override TIMELOCK = 3 days;
-    address public constant override FLASH_TOKEN = 0xA193E42526F1FEA8C99AF609dcEabf30C1c29fAA;
+    address public constant override FLASH_TOKEN = 0x20398aD62bb2D930646d45a6D4292baa0b860C1f;
 
     uint256 internal constant PRECISION = 1e18;
     uint256 internal constant MAX_FPY_FOR_1_YEAR = 5e17;
@@ -60,7 +60,7 @@ contract FlashProtocol is IFlashProtocol {
         _;
     }
 
-    constructor(address _initialMatchReceiver, uint256 _initialMatchRatio) public {
+    constructor(address _initialMatchReceiver, uint256 _initialMatchRatio) {
         _setMatchRatio(_initialMatchRatio);
         _setMatchReceiver(_initialMatchReceiver);
     }
@@ -162,8 +162,6 @@ contract FlashProtocol is IFlashProtocol {
 
         address staker = msg.sender;
 
-        IFlashToken(FLASH_TOKEN).transferFrom(staker, address(this), _amountIn);
-
         uint256 expiration = block.timestamp.add(_expiry);
         balances[staker] = balances[staker].add(_amountIn);
 
@@ -173,6 +171,8 @@ contract FlashProtocol is IFlashProtocol {
 
         mintedAmount = getMintAmount(_amountIn, _expiry);
         matchedAmount = getMatchedAmount(mintedAmount);
+
+        IFlashToken(FLASH_TOKEN).transferFrom(staker, address(this), _amountIn);
 
         IFlashToken(FLASH_TOKEN).mint(_receiver, mintedAmount);
         IFlashToken(FLASH_TOKEN).mint(matchReceiver, matchedAmount);

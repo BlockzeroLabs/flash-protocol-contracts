@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.6.12;
+pragma solidity 0.7.4;
 
 interface IFlashToken {
     function totalSupply() external view returns (uint256);
@@ -22,7 +22,7 @@ interface IFlashToken {
 
     function burn(uint256 value) external returns (bool);
 
-      function permit(
+    function permit(
         address owner,
         address spender,
         uint256 value,
