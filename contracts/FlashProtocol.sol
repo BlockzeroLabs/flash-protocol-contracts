@@ -22,7 +22,7 @@ contract FlashProtocol is IFlashProtocol {
     }
 
     uint256 public constant override TIMELOCK = 3 days;
-    address public constant override FLASH_TOKEN = 0x160105105B7A0B89cC8E1aEb8C071651E4863b40;
+    address public constant override FLASH_TOKEN = 0x70154729526CE110Cd74F54aD8e3dB19D4FbDD8C;
 
     uint256 internal constant PRECISION = 1e18;
     uint256 internal constant MAX_FPY_FOR_1_YEAR = 5e17;

@@ -10,15 +10,6 @@ import { FlashTokenTest } from "../typechain/FlashTokenTest";
 import stakes from "../data.json"
 
 import { constants, ethers, utils } from "ethers";
-import { ecsign } from "ethereumjs-util";
-
-import {
-    defaultAbiCoder,
-    hexlify,
-    keccak256,
-    toUtf8Bytes,
-    solidityPack
-} from "ethers/lib/utils";
 
 use(solidity)
 
@@ -26,48 +17,93 @@ describe("Unit tests", function () {
     let flashToken: FlashTokenTest;
     let flashProtocol: FlashProtocolTest;
     let wallet: SignerWithAddress;
-    let walletTo: SignerWithAddress;
-    let counter = 0;
-    let totalSupply = "1000000000000000000000000"
-    let universalTimestamp = 1615544773
-
-
-
+    let walletMatchReceiver: SignerWithAddress;
+    let walletReceiverStake: SignerWithAddress;
+    let totalSupply = "10000000000000000000000000"
+    let deployFlag: boolean = false;
+    let PRECISION = "1000000000000000000"
+    let ONE_YEAR_SECONDS = "31536000"
 
     before(async function () {
         const wallets: SignerWithAddress[] = await hre.ethers.getSigners();
         wallet = wallets[0];
-        walletTo = wallets[1];
+        walletMatchReceiver = wallets[1];
+        walletReceiverStake = wallets[2];
     });
 
     describe("FlashProtocolTest", function () {
         async function deploy() {
-
             const flashTokenAddress = await predictAddress(wallet);
-            const FlashProtocol = (await hre.ethers.getContractFactory("FlashProtocolTest", wallet)).connect(walletTo);
+            const FlashProtocol = (await hre.ethers.getContractFactory("FlashProtocolTest", wallet)).connect(walletMatchReceiver);
             const FlashToken = await hre.ethers.getContractFactory("FlashTokenTest", wallet);
-            flashProtocol = <FlashProtocolTest>await FlashProtocol.deploy(walletTo.address, "0", flashTokenAddress);
+            flashProtocol = <FlashProtocolTest>await FlashProtocol.deploy(walletMatchReceiver.address, "2000", flashTokenAddress);
             flashToken = <FlashTokenTest>await FlashToken.deploy(wallet.address, flashProtocol.address);
             await flashToken.mint(wallet.address, totalSupply);
             await flashToken.approve(flashProtocol.address, ethers.constants.MaxUint256);
         }
 
+        async function getFpy(amountIn: string): Promise<string> {
+            let totalSupply = (await flashToken.totalSupply()).toString();
+            let lockedAmount = (await flashToken.balanceOf(flashProtocol.address)).toString();
+
+            let totalFlash = new BigNumber(lockedAmount).plus(new BigNumber(amountIn)).multipliedBy(PRECISION).toFixed(0)
+            return new BigNumber(PRECISION).minus(new BigNumber(totalFlash).dividedBy(new BigNumber(totalSupply))).dividedBy(2).toFixed(0)
+        }
+
+        async function getMintedAmount(amountIn: string, expiry: string, fpy: string) {
+            return (new BigNumber(amountIn).multipliedBy(new BigNumber(expiry)).multipliedBy(new BigNumber(fpy))).dividedBy(new BigNumber(PRECISION).multipliedBy(new BigNumber(ONE_YEAR_SECONDS))).toFixed(0)
+        }
+
+        async function matchAmount(mintedAmount: string) {
+            return (new BigNumber(mintedAmount).multipliedBy(new BigNumber(2000)).dividedBy(new BigNumber(10000))).toFixed(0)
+        }
+
+        async function calculateUnstakeAount() {
+
+        }
+
+        async function calculateBurnAmount() {
+
+        }
+
         async function stake(amount: BigNumber, duration: string, mintedAmount: string, fpyAfterStake: string): Promise<any> {
             try {
                 let maxStakePeriod = (await flashProtocol.calculateMaxStakePeriod(amount.toString())).toString()
-                console.log(maxStakePeriod, duration)
+                console.log(duration, maxStakePeriod)
                 expect(Number(duration) <= Number(maxStakePeriod))
+
+                let balanceStakeReceiverBefore = (await flashToken.balanceOf(walletReceiverStake.address)).toString()
+                let balanceMatchReceiverBefore = (await flashToken.balanceOf(walletMatchReceiver.address)).toString()
+                
+                let fpyBeforeStake = await getFpy(amount.toString());
+                let fpyBeforeStakeContract = new BigNumber((await flashProtocol.getFPY(amount.toString())).toString()).toFixed(0)
+                expect(fpyBeforeStake).to.be.equal(fpyBeforeStakeContract)
+
                 const protocol = flashProtocol.connect(wallet);
-                let fpyBeforeStakeContract = (await flashProtocol.getFPY("0")).toString()
-                console.log(fpyBeforeStakeContract)
-                expect(fpyBeforeStakeContract).to.be.equal("500000000000000000");
-                let tx = await protocol.stake(amount.toString(), duration, wallet.address, "0x");
-                let fpyAfterStakeContract = (await flashProtocol.getFPY("0")).toString();
-                expect(fpyAfterStakeContract).to.be.equal(fpyAfterStake);
-                let totalSupplyContract = (await flashToken.totalSupply()).toString()
-                let mintedAmountContract = (new BigNumber(totalSupplyContract).minus(new BigNumber(totalSupply))).toFixed(0).toString();
-                expect(mintedAmountContract.toString()).to.be.equal(mintedAmount)
-                return tx
+                let tx = await protocol.stake(amount.toString(), duration, walletReceiverStake.address, "0x");
+                
+                let balancerStakeReceiverAfter = (await flashToken.balanceOf(walletReceiverStake.address)).toString()
+                let balanceMatchReceiverAfter = (await flashToken.balanceOf(walletMatchReceiver.address)).toString();
+                
+                let fpyAfterStake = await getFpy("0");
+                let fpyAfterStakeContract = new BigNumber((await flashProtocol.getFPY("0")).toString()).toFixed(0);
+                console.log(fpyAfterStake, fpyAfterStakeContract)
+                expect(fpyAfterStake).to.be.equal(fpyAfterStakeContract);
+                
+                let mintedAmount = await getMintedAmount(amount.toString(), duration, fpyBeforeStake);
+                let differenceBalance = (new BigNumber(balancerStakeReceiverAfter).minus(new BigNumber(balanceStakeReceiverBefore))).toFixed(0)
+                console.log(mintedAmount, differenceBalance, "Minted amount");
+                expect(mintedAmount).to.be.equal(differenceBalance);
+
+                // let mintedAmount = await matchAmount(amount.toString(), duration, fpyBeforeStake);
+                // let differenceBalance = (new BigNumber(balancerStakeReceiverAfter).minus(new BigNumber(balanceStakeReceiverBefore))).toFixed(0)
+                // console.log(mintedAmount, differenceBalance, "Minted amount");
+                // expect(mintedAmount).to.be.equal(differenceBalance);
+
+                // let totalSupplyContract = (await flashToken.totalSupply()).toString()
+                // let mintedAmountContract = (new BigNumber(totalSupplyContract).minus(new BigNumber(totalSupply))).toFixed(0).toString();
+                // expect(mintedAmountContract.toString()).to.be.equal(mintedAmount)
+                return null
             }
             catch (e) {
                 return false
@@ -141,21 +177,27 @@ describe("Unit tests", function () {
 
 
         async function testing(data: any) {
-            await deploy()
-            let tx = await stake(data.stakeAmount, data.expiry, data.mintedAmount, data.fpyAfterStake)
-            if (tx) {
-                let obj = await generateId(data.stakeAmount, data.expiry, tx)
-                if (data.expiry === data.unstakeTime) {
-                    // "300000000000000000000000"
-                    await hre.network.provider.send("evm_setNextBlockTimestamp", [obj.timestamp + Number(data.unstakeTime)])
-                    // await hre.network.provider.send("evm_increaseTime", [Number(data.unstakeTime)])
-                    console.log(data.stakeAmount)
-                    await unstake(obj.id, data.fpyAfterUnstake);
-                } else {
-                    await unstakeEarly(obj.id, data.unstakeAmount, data.stakeAmount)
-                }
+            if (!deployFlag) {
+                await deploy();
+                deployFlag = true;
             }
-
+            if (data.unstakeTime !== '0') {
+                deployFlag = false;
+                let tx = await stake(data.stakeAmount, data.expiry, data.mintedAmount, data.fpyAfterStake)
+                // if (tx) {
+                //     let obj = await generateId(data.stakeAmount, data.expiry, tx)
+                //     if (data.expiry === data.unstakeTime) {
+                //         await hre.network.provider.send("evm_setNextBlockTimestamp", [obj.timestamp + Number(data.unstakeTime)])
+                //         // await hre.network.provider.send("evm_increaseTime", [Number(data.unstakeTime)])
+                //         console.log(data.stakeAmount)
+                //         await unstake(obj.id, data.fpyAfterUnstake);
+                //     } else {
+                //         await unstakeEarly(obj.id, data.unstakeAmount, data.stakeAmount)
+                //     }
+                // }
+            } else {
+                await stake(data.stakeAmount, data.expiry, data.mintedAmount, data.fpyAfterStake)
+            }
         }
 
     });

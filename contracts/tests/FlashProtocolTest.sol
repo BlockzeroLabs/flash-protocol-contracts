@@ -246,6 +246,9 @@ contract FlashProtocolTest is IFlashProtocol {
 
     function getPercentageStaked(uint256 _amountIn) public view override returns (uint256) {
         uint256 locked = IFlashToken(TOKEN).balanceOf(address(this)).add(_amountIn);
+        console.log("locked: %s", locked);
+        uint256 ts = IFlashToken(TOKEN).totalSupply();
+        console.log("TS: %s", ts);
         uint256 ratio = locked.mul(PRECISION).div(IFlashToken(TOKEN).totalSupply());
         return ratio;
     }
