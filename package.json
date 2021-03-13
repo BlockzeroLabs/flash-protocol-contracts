@@ -77,6 +77,7 @@
   },
   "dependencies": {
     "bignumber.js": "^9.0.1",
+    "chai-bignumber": "^3.0.0",
     "csvtojson": "^2.0.10",
     "ethereumjs-util": "^7.0.9"
   }
